@@ -17,7 +17,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: registry.cn-beijing.aliyuncs.com/xbmlz/go-web-template
+          images: registry.cn-beijing.aliyuncs.com/nglab-dev/nglab
           tags: |
             type=raw,value=latest
             type=ref,enable=true,priority=600,prefix=,suffix=,event=branch
