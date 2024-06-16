@@ -18,4 +18,4 @@ WORKDIR /app
 
 EXPOSE 8080
 
-CMD ["./nglab"]
+CMD ["./nglab", "run"]
