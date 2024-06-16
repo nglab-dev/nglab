@@ -1,4 +1,4 @@
 .PHONY: build
 
 build:
-	go build -o ./bin/nglab ./cmd/nglab
+	go build -o ./bin/nglab .
