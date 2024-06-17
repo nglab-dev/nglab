@@ -14,8 +14,19 @@ type Server struct {
 	Address string `json:"address" mapstructure:"address"`
 }
 
+type Database struct {
+	Driver   string `json:"driver" mapstructure:"driver"`
+	Host     string `json:"host" mapstructure:"host"`
+	Port     int    `json:"port" mapstructure:"port"`
+	User     string `json:"user" mapstructure:"user"`
+	Password string `json:"password" mapstructure:"password"`
+	Name     string `json:"name" mapstructure:"name"`
+	Params   string `json:"params" mapstructure:"params"`
+}
+
 type Config struct {
-	Server *Server `json:"server" mapstructure:"server"`
+	Server   *Server   `json:"server" mapstructure:"server"`
+	Database *Database `json:"database" mapstructure:"database"`
 }
 
 var configFilePath = "./configs/config.yaml"
@@ -24,6 +35,10 @@ var defaultConfig = Config{
 	Server: &Server{
 		Port:    8080,
 		Address: "127.0.0.1",
+	},
+	Database: &Database{
+		Driver: "sqlite",
+		Name:   "./nglab.db",
 	},
 }
 
@@ -54,4 +69,18 @@ func (s *Server) ListenAddr() string {
 		return "0.0.0.0:8080"
 	}
 	return fmt.Sprintf("%s:%d", s.Address, s.Port)
+}
+
+func (d *Database) DSN() string {
+	if err := validator.New().Struct(d); err != nil {
+		return "./db.sqlite3"
+	}
+
+	if d.Driver == "sqlite3" {
+		return d.Name
+	}
+
+	return fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?%s",
+		d.User, d.Password, d.Host, d.Port, d.Name, d.Params,
+	)
 }

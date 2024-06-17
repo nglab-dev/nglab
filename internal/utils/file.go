@@ -9,3 +9,7 @@ func IsFile(path string) bool {
 	}
 	return !f.IsDir()
 }
+
+func MkdirIfNotExist(path string) error {
+	return os.MkdirAll(path, os.ModePerm)
+}
