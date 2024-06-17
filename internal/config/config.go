@@ -20,14 +20,14 @@ type Config struct {
 
 var configFilePath = "./configs/config.yaml"
 
-var defaultConfig = &Config{
+var defaultConfig = Config{
 	Server: &Server{
 		Port:    8080,
 		Address: "127.0.0.1",
 	},
 }
 
-func New() *Config {
+func New() Config {
 	conf := defaultConfig
 
 	viper.SetConfigFile(configFilePath)
@@ -35,7 +35,7 @@ func New() *Config {
 		panic(errors.New("failed to load config file: " + err.Error()))
 	}
 
-	if err := viper.Unmarshal(conf); err != nil {
+	if err := viper.Unmarshal(&conf); err != nil {
 		panic(errors.New("failed to unmarshal config file: " + err.Error()))
 	}
 

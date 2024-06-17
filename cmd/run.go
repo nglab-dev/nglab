@@ -21,7 +21,6 @@ var runCmd = &cobra.Command{
 	Long:  `Run a application`,
 	Run: func(_ *cobra.Command, _ []string) {
 		config.SetConfigFilePath(cfgFile)
-
 		runApp()
 	},
 }
