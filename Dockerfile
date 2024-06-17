@@ -13,6 +13,7 @@ RUN make build
 FROM alpine:latest
 
 COPY --from=builder /src/bin/nglab /app/nglab
+COPY --from=builder /src/configs /app/configs
 
 WORKDIR /app
 

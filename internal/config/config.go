@@ -18,7 +18,7 @@ type Config struct {
 	Server *Server `json:"server" mapstructure:"server"`
 }
 
-var configFilePath = "./config.yaml"
+var configFilePath = "./configs/config.yaml"
 
 var defaultConfig = &Config{
 	Server: &Server{
