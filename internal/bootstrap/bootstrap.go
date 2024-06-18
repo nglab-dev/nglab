@@ -8,21 +8,21 @@ import (
 	"net/http"
 
 	"github.com/nglab-dev/nglab/internal/config"
+	"github.com/nglab-dev/nglab/internal/database"
 	"github.com/nglab-dev/nglab/internal/server"
-	"github.com/nglab-dev/nglab/internal/storage"
 	"go.uber.org/fx"
 )
 
 var Module = fx.Options(
 	fx.Provide(server.New),
 	fx.Provide(config.New),
-	fx.Provide(storage.New),
+	fx.Provide(database.New),
 	// invoke the bootstrap function
 	fx.Invoke(bootstrap),
 )
 
-func bootstrap(lc fx.Lifecycle, srv server.Server, cfg config.Config, st storage.Storage) {
-	db, err := st.DB.DB()
+func bootstrap(lc fx.Lifecycle, srv server.Server, cfg config.Config, db database.Database) {
+	dbConn, err := db.DB.DB()
 	if err != nil {
 		slog.Error("Error connecting to the database: %v", err)
 
@@ -50,8 +50,8 @@ func bootstrap(lc fx.Lifecycle, srv server.Server, cfg config.Config, st storage
 				return err
 			}
 
-			if db != nil {
-				return db.Close()
+			if dbConn != nil {
+				return dbConn.Close()
 			}
 			return nil
 		},
