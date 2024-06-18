@@ -3,7 +3,6 @@ package bootstrap
 import (
 	"context"
 	"errors"
-	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -30,7 +29,7 @@ func bootstrap(lc fx.Lifecycle, srv server.Server, cfg config.Config, db databas
 	lc.Append(fx.Hook{
 		OnStart: func(context.Context) error {
 			// perform any bootstrap actions here
-			fmt.Println("Bootstrapping...")
+			slog.Info("Starting the Application")
 
 			go func() {
 				if err := srv.Start(); err != nil {
@@ -45,6 +44,7 @@ func bootstrap(lc fx.Lifecycle, srv server.Server, cfg config.Config, db databas
 			return nil
 		},
 		OnStop: func(context.Context) error {
+			slog.Info("Stopping the Application")
 			// perform any cleanup actions here
 			if err := srv.Shutdown(); err != nil {
 				return err

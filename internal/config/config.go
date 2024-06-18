@@ -38,7 +38,7 @@ var defaultConfig = Config{
 	},
 	Database: &Database{
 		Driver: "sqlite",
-		Name:   "./nglab.db",
+		Name:   "./data/nglab.db",
 	},
 }
 
@@ -73,10 +73,10 @@ func (s *Server) ListenAddr() string {
 
 func (d *Database) DSN() string {
 	if err := validator.New().Struct(d); err != nil {
-		return "./db.sqlite3"
+		return "./data/nglab.db"
 	}
 
-	if d.Driver == "sqlite3" {
+	if d.Driver == "sqlite" {
 		return d.Name
 	}
 

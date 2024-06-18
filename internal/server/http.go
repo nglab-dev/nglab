@@ -3,11 +3,15 @@ package server
 import (
 	"context"
 	"errors"
+	"log/slog"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/config"
+	"github.com/nglab-dev/nglab/web/views"
+	sloggin "github.com/samber/slog-gin"
 )
 
 const DefaultShutdownTimeout = time.Minute
@@ -19,15 +23,32 @@ type Server struct {
 }
 
 func New(conf config.Config) Server {
-	engine := gin.New()
 
-	engine.GET("/", func(c *gin.Context) {
-		c.JSON(200, conf)
+	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
+
+	router := gin.Default()
+
+	router.Use(sloggin.New(logger))
+	router.Use(gin.Recovery())
+
+	render := router.HTMLRender
+	router.HTMLRender = &HTMLTemplRenderer{FallbackHtmlRenderer: render}
+
+	// Disable trusted proxy warning.
+	router.SetTrustedProxies(nil)
+
+	router.GET("/", func(c *gin.Context) {
+		c.HTML(http.StatusOK, "", views.Index())
+	})
+
+	// 404
+	router.NoRoute(func(c *gin.Context) {
+		c.HTML(http.StatusNotFound, "", views.NotFound())
 	})
 
 	srv := &http.Server{
 		Addr:    conf.Server.ListenAddr(),
-		Handler: engine,
+		Handler: router,
 	}
 
 	return Server{
