@@ -10,6 +10,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/config"
+	"github.com/nglab-dev/nglab/internal/utils"
+	"github.com/nglab-dev/nglab/public"
 	"github.com/nglab-dev/nglab/web/views"
 	sloggin "github.com/samber/slog-gin"
 )
@@ -36,6 +38,14 @@ func New(conf config.Config) Server {
 
 	// Disable trusted proxy warning.
 	router.SetTrustedProxies(nil)
+
+	// static files
+	_, usingGoRun := utils.WithGoRun()
+	if usingGoRun {
+		router.Static("/public", "./public")
+	} else {
+		router.StaticFS("/public", http.FS(public.AssetsFS))
+	}
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "", views.Index())
