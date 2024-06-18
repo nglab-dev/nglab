@@ -9,7 +9,7 @@ import (
 	"github.com/a-h/templ"
 )
 
-var Default = &HTMLTemplRenderer{}
+var DefaultRenderer = &HTMLTemplRenderer{}
 
 type HTMLTemplRenderer struct {
 	FallbackHtmlRenderer render.HTMLRender
