@@ -55,6 +55,8 @@ func New(cfg config.Config) Server {
 		c.HTML(http.StatusOK, "", views.Index())
 	})
 
+	RegisterRoutes(router)
+
 	srv := &http.Server{
 		Addr:    cfg.Server.ListenAddr(),
 		Handler: router,
