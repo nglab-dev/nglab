@@ -12,7 +12,6 @@ endif
 
 install:
 	@go install github.com/a-h/templ/cmd/templ@latest
-	@go install github.com/cosmtrek/air@v1.51.0
 
 # run templ generation in watch mode to detect all .templ files and 
 # re-create _templ.txt files on change, then send reload event to browser. 
@@ -22,7 +21,8 @@ templ:
 
 # run air to detect any go file changes to re-build and re-run the server.
 server:
-	@air --build.cmd "go build -o $(BIN) ." \
+	@go run github.com/cosmtrek/air@v1.51.0 \
+	--build.cmd "go build -o $(BIN) ." \
 	--build.bin "$(BIN) run" \
 	--build.delay "100" \
 	--build.exclude_dir "node_modules" \
@@ -40,7 +40,7 @@ watch-esbuild:
 
 # watch for any js or css change in the assets/ folder, then reload the browser via templ proxy.
 sync_assets:
-	@air \
+	@go run github.com/cosmtrek/air@v1.51.0 \
 	--build.cmd "templ generate --notify-proxy" \
 	--build.bin "true" \
 	--build.delay "100" \
@@ -57,5 +57,6 @@ dev:
 build:
 	@npx tailwindcss -i web/assets/app.css -o ./public/assets/styles.css
 	@npx esbuild web/assets/index.js --bundle --outdir=public/assets
+	@templ generate
 	@go build -o $(BIN) .
 	@echo "compiled you application with all its assets to a single binary => $(BIN)"

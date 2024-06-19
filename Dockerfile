@@ -1,13 +1,12 @@
 # Build
-FROM golang:1.22.3-alpine AS builder
+FROM golang:1.21.11-alpine AS builder
 
 COPY . /src
 WORKDIR /src
 
-RUN apk --no-cache --no-progress add build-base git bash nodejs npm \
-    && make install \
-    && make build 
+RUN apk --no-cache --no-progress add build-base git bash nodejs npm
 
+RUN make install && make build
 
 # Run
 FROM alpine:latest
