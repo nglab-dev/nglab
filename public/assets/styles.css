@@ -446,6 +446,63 @@ video {
   display: none;
 }
 
+* {
+  --tw-border-opacity: 1;
+  border-color: hsl(var(--border) / var(--tw-border-opacity));
+}
+
+body {
+  --tw-bg-opacity: 1;
+  background-color: hsl(var(--background) / var(--tw-bg-opacity));
+  --tw-text-opacity: 1;
+  color: hsl(var(--foreground) / var(--tw-text-opacity));
+}
+
+:root {
+  --background: 0 0% 100%;
+  --foreground: 240 10% 3.9%;
+  --card: 0 0% 100%;
+  --card-foreground: 240 10% 3.9%;
+  --popover: 0 0% 100%;
+  --popover-foreground: 240 10% 3.9%;
+  --primary: 240 5.9% 10%;
+  --primary-foreground: 0 0% 98%;
+  --secondary: 240 4.8% 95.9%;
+  --secondary-foreground: 240 5.9% 10%;
+  --muted: 240 4.8% 95.9%;
+  --muted-foreground: 240 3.8% 46.1%;
+  --accent: 240 4.8% 95.9%;
+  --accent-foreground: 240 5.9% 10%;
+  --destructive: 0 72.22% 50.59%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 5.9% 90%;
+  --input: 240 5.9% 90%;
+  --ring: 240 5.9% 10%;
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: 240 10% 3.9%;
+  --foreground: 0 0% 98%;
+  --card: 240 10% 3.9%;
+  --card-foreground: 0 0% 98%;
+  --popover: 240 10% 3.9%;
+  --popover-foreground: 0 0% 98%;
+  --primary: 0 0% 98%;
+  --primary-foreground: 240 5.9% 10%;
+  --secondary: 240 3.7% 15.9%;
+  --secondary-foreground: 0 0% 98%;
+  --muted: 240 3.7% 15.9%;
+  --muted-foreground: 240 5% 64.9%;
+  --accent: 240 3.7% 15.9%;
+  --accent-foreground: 0 0% 98%;
+  --destructive: 0 62.8% 30.6%;
+  --destructive-foreground: 0 0% 98%;
+  --border: 240 3.7% 15.9%;
+  --input: 240 3.7% 15.9%;
+  --ring: 240 4.9% 83.9%;
+}
+
 *, ::before, ::after {
   --tw-border-spacing-x: 0;
   --tw-border-spacing-y: 0;
@@ -554,6 +611,20 @@ video {
   --tw-contain-style:  ;
 }
 
+.container {
+  width: 100%;
+  margin-right: auto;
+  margin-left: auto;
+  padding-right: 2rem;
+  padding-left: 2rem;
+}
+
+@media (min-width: 1400px) {
+  .container {
+    max-width: 1400px;
+  }
+}
+
 .static {
   position: static;
 }
@@ -579,6 +650,10 @@ video {
   max-width: 80rem;
 }
 
+.cursor-pointer {
+  cursor: pointer;
+}
+
 .flex-col {
   flex-direction: column;
 }
@@ -591,8 +666,21 @@ video {
   justify-content: center;
 }
 
+.justify-between {
+  justify-content: space-between;
+}
+
 .gap-4 {
   gap: 1rem;
+}
+
+.border-b {
+  border-bottom-width: 1px;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .align-middle {
@@ -609,6 +697,35 @@ video {
   line-height: 1.75rem;
 }
 
+.text-sm {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
 .font-bold {
   font-weight: 700;
+}
+
+.font-semibold {
+  font-weight: 600;
+}
+
+.uppercase {
+  text-transform: uppercase;
+}
+
+.text-foreground {
+  --tw-text-opacity: 1;
+  color: hsl(var(--foreground) / var(--tw-text-opacity));
+}
+
+.text-muted-foreground {
+  --tw-text-opacity: 1;
+  color: hsl(var(--muted-foreground) / var(--tw-text-opacity));
+}
+
+/* fix for Alpine users. */
+
+[x-cloak] {
+  display: none !important;
 }

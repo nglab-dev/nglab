@@ -60,3 +60,7 @@ build:
 	@templ generate
 	@go build -o $(BIN) .
 	@echo "compiled you application with all its assets to a single binary => $(BIN)"
+
+
+migrate:
+	@go run . migrate

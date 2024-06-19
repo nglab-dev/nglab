@@ -21,7 +21,7 @@ var Module = fx.Options(
 )
 
 func bootstrap(lc fx.Lifecycle, srv server.Server, cfg config.Config, db database.Database) {
-	dbConn, err := db.DB.DB()
+	dbConn, err := db.ORM.DB()
 	if err != nil {
 		slog.Error("Error connecting to the database: %v", err)
 

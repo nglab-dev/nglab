@@ -6,8 +6,13 @@ import (
 	"github.com/spf13/cobra"
 )
 
+var (
+	cfgFile string
+)
+
 func init() {
-	rootCmd.AddCommand(runCmd)
+	runCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "configs/config.yaml", "config file (default is configs/config.yaml)")
+	rootCmd.AddCommand(runCmd, migrateCmd)
 }
 
 var rootCmd = &cobra.Command{

@@ -13,12 +13,12 @@ import (
 )
 
 type Database struct {
-	DB *gorm.DB
+	ORM *gorm.DB
 }
 
 func New(cfg config.Config) Database {
 	dsn := cfg.Database.DSN()
-	driver := cfg.Database.Driver
+	driver := cfg.Database.Dialect
 
 	if driver == "sqlite" {
 		dbFileDir := filepath.Dir(cfg.Database.Name)
@@ -46,5 +46,9 @@ func New(cfg config.Config) Database {
 		return Database{}
 	}
 
-	return Database{DB: db}
+	return Database{ORM: db}
+}
+
+func (db *Database) AutoMigrate() error {
+	return db.ORM.AutoMigrate()
 }

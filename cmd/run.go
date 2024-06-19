@@ -7,13 +7,6 @@ import (
 	"go.uber.org/fx"
 )
 
-var (
-	cfgFile string
-)
-
-func init() {
-	runCmd.PersistentFlags().StringVarP(&cfgFile, "config", "c", "configs/config.yaml", "config file (default is configs/config.yaml)")
-}
 
 var runCmd = &cobra.Command{
 	Use:   "run",

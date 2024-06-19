@@ -15,7 +15,7 @@ type Server struct {
 }
 
 type Database struct {
-	Driver   string `json:"driver" mapstructure:"driver"`
+	Dialect  string `json:"dialect" mapstructure:"dialect"`
 	Host     string `json:"host" mapstructure:"host"`
 	Port     int    `json:"port" mapstructure:"port"`
 	User     string `json:"user" mapstructure:"user"`
@@ -37,8 +37,8 @@ var defaultConfig = Config{
 		Address: "127.0.0.1",
 	},
 	Database: &Database{
-		Driver: "sqlite",
-		Name:   "./data/nglab.db",
+		Dialect: "sqlite",
+		Name:    "./data/nglab.db",
 	},
 }
 
@@ -76,7 +76,7 @@ func (d *Database) DSN() string {
 		return "./data/nglab.db"
 	}
 
-	if d.Driver == "sqlite" {
+	if d.Dialect == "sqlite" {
 		return d.Name
 	}
 

@@ -1,3 +1,3 @@
 #!/bin/bash
-
-/usr/bin/nglab run
+/app/nglab migrate
+/app/nglab run

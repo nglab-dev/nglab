@@ -13,9 +13,8 @@ FROM alpine:latest
 
 COPY --from=builder /src/bin/nglab /app/nglab
 COPY --from=builder /src/configs /app/configs
+COPY --from=builder /src/scripts/entrypoint.sh /app/entrypoint.sh
 
 WORKDIR /app
-
 EXPOSE 8080
-
-CMD ["./nglab", "run"]
+ENTRYPOINT ["/entrypoint.sh"]
