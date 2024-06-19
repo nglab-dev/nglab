@@ -14,47 +14,9 @@ install:
 	@go install github.com/a-h/templ/cmd/templ@latest
 	@npm install
 
-# run templ generation in watch mode to detect all .templ files and 
-# re-create _templ.txt files on change, then send reload event to browser. 
-# Default url: http://localhost:8080
-templ:
-	@templ generate --watch --proxy="http://localhost:8080" --open-browser=false
+migrate:
+	@go run . migrate
 
-# run air to detect any go file changes to re-build and re-run the server.
-server:
-	@go run github.com/cosmtrek/air@v1.51.0 \
-	--build.cmd "go build -o $(BIN) ." \
-	--build.bin "$(BIN) run" \
-	--build.delay "100" \
-	--build.exclude_dir "node_modules" \
-	--build.include_ext "go" \
-	--build.stop_on_error "false" \
-	--misc.clean_on_exit true
-
-# run tailwindcss to generate the styles.css bundle in watch mode.
-watch-assets:
-	@npm run dev:css   
-
-# run esbuild to generate the index.js bundle in watch mode.
-watch-esbuild:
-	@npm run dev:js
-
-# watch for any js or css change in the assets/ folder, then reload the browser via templ proxy.
-sync_assets:
-	@go run github.com/cosmtrek/air@v1.51.0 \
-	--build.cmd "templ generate --notify-proxy" \
-	--build.bin "true" \
-	--build.delay "100" \
-	--build.exclude_dir "" \
-	--build.include_dir "public" \
-	--build.include_ext "js,css"
-
-# start the application in development
-dev:
-	@make -j5 templ server watch-assets watch-esbuild sync_assets
-
-# build the application for production. This will compile your app
-# to a single binary with all its assets embedded.
 build:
 	@npm run build:css
 	@npm run build:js
@@ -62,6 +24,36 @@ build:
 	@go build -o $(BIN) .
 	@echo "compiled you application with all its assets to a single binary => $(BIN)"
 
+run:
+	@go run . run
 
-migrate:
-	@go run . migrate
+watch-templ:
+	@templ generate --watch --proxy="http://localhost:8080" --open-browser=false
+
+watch-css:
+	@npm run dev:css
+
+watch-js:
+	@npm run dev:js
+
+watch-go:
+	@go run github.com/cosmtrek/air@v1.51.0 \
+		--build.cmd "go build -o $(BIN) ." \
+		--build.bin "$(BIN) run" \
+		--build.delay "100" \
+		--build.exclude_dir "node_modules" \
+		--build.include_ext "go" \
+		--build.stop_on_error "false" \
+		--misc.clean_on_exit true
+
+sync-assets:
+	@go run github.com/cosmtrek/air@v1.51.0 \
+		--build.cmd "templ generate --notify-proxy" \
+		--build.bin "true" \
+		--build.delay "100" \
+		--build.exclude_dir "" \
+		--build.include_dir "public" \
+		--build.include_ext "js,css"
+
+watch:
+	@make -j5 watch-css watch-js watch-templ watch-go sync-assets

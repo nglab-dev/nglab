@@ -23,7 +23,7 @@ type Server struct {
 	srv *http.Server
 }
 
-func New(conf config.Config) Server {
+func New(cfg config.Config) Server {
 
 	logger := slog.New(slog.NewTextHandler(os.Stdout, nil))
 
@@ -38,15 +38,25 @@ func New(conf config.Config) Server {
 	// Disable trusted proxy warning.
 	router.SetTrustedProxies(nil)
 
-	// static files
-	router.StaticFS("/public", http.FS(public.AssetsFS))
+	if cfg.App.Env == "dev" {
+		// disable caching
+		router.Use(func(c *gin.Context) {
+			c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
+			c.Header("Pragma", "no-cache")
+			c.Header("Expires", "0")
+			c.Next()
+		})
+		router.StaticFS("/public", http.Dir("./public"))
+	} else {
+		router.StaticFS("/public", http.FS(public.AssetsFS))
+	}
 
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "", views.Index())
 	})
 
 	srv := &http.Server{
-		Addr:    conf.Server.ListenAddr(),
+		Addr:    cfg.Server.ListenAddr(),
 		Handler: router,
 	}
 

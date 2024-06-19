@@ -9,6 +9,10 @@ import (
 	"github.com/spf13/viper"
 )
 
+type App struct {
+	Env string `json:"env" mapstructure:"env"`
+}
+
 type Server struct {
 	Port    int    `json:"port" mapstructure:"port"`
 	Address string `json:"address" mapstructure:"address"`
@@ -25,6 +29,7 @@ type Database struct {
 }
 
 type Config struct {
+	App      *App      `json:"app" mapstructure:"app"`
 	Server   *Server   `json:"server" mapstructure:"server"`
 	Database *Database `json:"database" mapstructure:"database"`
 }
@@ -32,6 +37,9 @@ type Config struct {
 var configFilePath = "./configs/config.yaml"
 
 var defaultConfig = Config{
+	App: &App{
+		Env: "dev",
+	},
 	Server: &Server{
 		Port:    8080,
 		Address: "127.0.0.1",
