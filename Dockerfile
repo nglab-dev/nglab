@@ -17,4 +17,4 @@ COPY --from=builder /src/scripts/entrypoint.sh /app/entrypoint.sh
 
 WORKDIR /app
 EXPOSE 8080
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["./entrypoint.sh"]
