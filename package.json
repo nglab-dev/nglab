@@ -4,7 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:css": "tailwindcss -i web/assets/app.css -o ./public/assets/styles.css --watch",
+    "dev:js": "esbuild web/assets/index.js --bundle --outdir=public/assets --watch",
+    "build:css": "tailwindcss -i web/assets/app.css -o ./public/assets/styles.css",
+    "build:js": "esbuild web/assets/index.js --bundle --outdir=public/assets"
   },
   "keywords": [],
   "author": "",

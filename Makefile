@@ -12,6 +12,7 @@ endif
 
 install:
 	@go install github.com/a-h/templ/cmd/templ@latest
+	@npm install
 
 # run templ generation in watch mode to detect all .templ files and 
 # re-create _templ.txt files on change, then send reload event to browser. 
@@ -32,11 +33,11 @@ server:
 
 # run tailwindcss to generate the styles.css bundle in watch mode.
 watch-assets:
-	npx tailwindcss -i web/assets/app.css -o ./public/assets/styles.css --watch   
+	@npm run dev:css   
 
 # run esbuild to generate the index.js bundle in watch mode.
 watch-esbuild:
-	npx esbuild web/assets/index.js --bundle --outdir=public/assets --watch
+	@npm run dev:js
 
 # watch for any js or css change in the assets/ folder, then reload the browser via templ proxy.
 sync_assets:
@@ -55,8 +56,8 @@ dev:
 # build the application for production. This will compile your app
 # to a single binary with all its assets embedded.
 build:
-	@npx tailwindcss -i web/assets/app.css -o ./public/assets/styles.css
-	@npx esbuild web/assets/index.js --bundle --outdir=public/assets
+	@npm run build:css
+	@npm run build:js
 	@templ generate
 	@go build -o $(BIN) .
 	@echo "compiled you application with all its assets to a single binary => $(BIN)"
