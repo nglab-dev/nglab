@@ -11,14 +11,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/public"
-	"github.com/nglab-dev/nglab/web/views"
 	sloggin "github.com/samber/slog-gin"
 )
 
 const DefaultShutdownTimeout = time.Minute
 
 type Server struct {
-	srv *http.Server
+	srv    *http.Server
+	Router *gin.Engine
 }
 
 func New(cfg config.Config) Server {
@@ -49,12 +49,6 @@ func New(cfg config.Config) Server {
 		router.StaticFS("/public", http.FS(public.AssetsFS))
 	}
 
-	router.GET("/", func(c *gin.Context) {
-		c.HTML(http.StatusOK, "", views.Index())
-	})
-
-	RegisterRoutes(router)
-
 	srv := &http.Server{
 		Addr:    cfg.Server.ListenAddr(),
 		Handler: router,
@@ -62,6 +56,7 @@ func New(cfg config.Config) Server {
 
 	return Server{
 		srv,
+		router,
 	}
 }
 

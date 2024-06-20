@@ -8,11 +8,19 @@ import (
 
 	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/internal/database"
+	"github.com/nglab-dev/nglab/internal/handler"
+	"github.com/nglab-dev/nglab/internal/repo"
+	"github.com/nglab-dev/nglab/internal/router"
 	"github.com/nglab-dev/nglab/internal/serve"
+	"github.com/nglab-dev/nglab/internal/service"
 	"go.uber.org/fx"
 )
 
 var Module = fx.Options(
+	handler.Module,
+	router.Module,
+	service.Module,
+	repo.Module,
 	fx.Provide(serve.New),
 	fx.Provide(config.New),
 	fx.Provide(database.New),
@@ -20,7 +28,7 @@ var Module = fx.Options(
 	fx.Invoke(bootstrap),
 )
 
-func bootstrap(lc fx.Lifecycle, srv serve.Server, cfg config.Config, db database.Database) {
+func bootstrap(lc fx.Lifecycle, cfg config.Config, srv serve.Server, routes router.Routes, db database.Database) {
 	dbConn, err := db.ORM.DB()
 	if err != nil {
 		slog.Error("Error connecting to the database: %v", err)
@@ -32,6 +40,8 @@ func bootstrap(lc fx.Lifecycle, srv serve.Server, cfg config.Config, db database
 			slog.Info("Starting the Application")
 
 			go func() {
+				routes.Setup()
+
 				if err := srv.Start(); err != nil {
 					if errors.Is(err, http.ErrServerClosed) {
 						slog.Debug("Shutting down the Application")

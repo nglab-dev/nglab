@@ -7,7 +7,6 @@ import (
 	"go.uber.org/fx"
 )
 
-
 var runCmd = &cobra.Command{
 	Use:   "run",
 	Short: "Run a application",
@@ -19,5 +18,5 @@ var runCmd = &cobra.Command{
 }
 
 func runApp() {
-	fx.New(bootstrap.Module, fx.NopLogger).Run()
+	fx.New(bootstrap.Module).Run()
 }
