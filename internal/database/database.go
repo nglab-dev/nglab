@@ -6,6 +6,7 @@ import (
 
 	"github.com/glebarez/sqlite"
 	"github.com/nglab-dev/nglab/internal/config"
+	"github.com/nglab-dev/nglab/internal/model"
 	"github.com/nglab-dev/nglab/internal/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
@@ -50,5 +51,5 @@ func New(cfg config.Config) Database {
 }
 
 func (db *Database) AutoMigrate() error {
-	return db.ORM.AutoMigrate()
+	return db.ORM.AutoMigrate(model.User{})
 }

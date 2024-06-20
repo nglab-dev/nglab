@@ -1,4 +1,4 @@
-package server
+package serve
 
 import (
 	"context"
@@ -16,8 +16,6 @@ import (
 )
 
 const DefaultShutdownTimeout = time.Minute
-
-var _ IServer = (*Server)(nil)
 
 type Server struct {
 	srv *http.Server
@@ -38,7 +36,7 @@ func New(cfg config.Config) Server {
 	// Disable trusted proxy warning.
 	router.SetTrustedProxies(nil)
 
-	if cfg.App.Env == "dev" {
+	if cfg.App.IsDev() {
 		// disable caching
 		router.Use(func(c *gin.Context) {
 			c.Header("Cache-Control", "no-cache, no-store, must-revalidate")

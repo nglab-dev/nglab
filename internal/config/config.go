@@ -92,3 +92,11 @@ func (d *Database) DSN() string {
 		d.User, d.Password, d.Host, d.Port, d.Name, d.Params,
 	)
 }
+
+func (a *App) IsDev() bool {
+	return a.Env == "dev"
+}
+
+func (a *App) IsProd() bool {
+	return a.Env == "prod"
+}

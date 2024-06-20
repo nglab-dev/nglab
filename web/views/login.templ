@@ -5,7 +5,7 @@ package views
 import (
 	"github.com/nglab-dev/nglab/web/views/layouts"
 	"github.com/nglab-dev/nglab/web/views/components"
-	v "github.com/nglab-dev/nglab/pkg/validate"
+	"github.com/nglab-dev/nglab/pkg/v"
 )
 
 type AuthIndexPageData struct {
@@ -18,7 +18,7 @@ type LoginFormValues struct {
 	Password string `form:"password"`
 }
 
-templ LoginIndex(data AuthIndexPageData) {
+templ LoginView(data AuthIndexPageData) {
 	@layouts.BaseLayout() {
 		<div class="fixed top-6 right-6">
 			@components.ThemeSwitcher()
