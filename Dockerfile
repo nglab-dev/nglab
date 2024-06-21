@@ -11,6 +11,18 @@ RUN make build
 # Run
 FROM alpine:latest
 
+ARG TIMEZONE
+ENV TIMEZONE=${TIMEZONE:-"Asia/Shanghai"}
+
+RUN apk update \
+    && apk --no-cache add \
+        bash \
+        ca-certificates \
+        curl \
+        tzdata \
+    && ln -sf /usr/share/zoneinfo/${TIMEZONE} /etc/localtime \
+    && echo "${TIMEZONE}" > /etc/timezone
+
 WORKDIR /app
 
 COPY --from=builder /src/bin/nglab ./nglab
@@ -21,4 +33,5 @@ RUN chmod 755 ./nglab
 RUN chmod 755 ./entrypoint.sh
 
 EXPOSE 8080
+
 ENTRYPOINT ["./entrypoint.sh"]
