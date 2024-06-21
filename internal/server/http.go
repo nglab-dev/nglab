@@ -20,7 +20,7 @@ const DefaultShutdownTimeout = time.Minute
 
 type Server struct {
 	srv    *http.Server
-	Router *gin.Engine
+	Router *gin.RouterGroup
 }
 
 func New(cfg config.Config) Server {
@@ -43,7 +43,7 @@ func New(cfg config.Config) Server {
 
 	return Server{
 		srv,
-		router,
+		router.Group("/api/v1"),
 	}
 }
 

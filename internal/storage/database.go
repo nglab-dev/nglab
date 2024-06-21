@@ -1,4 +1,4 @@
-package database
+package storage
 
 import (
 	"log/slog"
@@ -13,11 +13,11 @@ import (
 	"gorm.io/gorm"
 )
 
-type Database struct {
-	ORM *gorm.DB
+type Storage struct {
+	DB *gorm.DB
 }
 
-func New(cfg config.Config) Database {
+func New(cfg config.Config) Storage {
 	dsn := cfg.Database.DSN()
 	driver := cfg.Database.Dialect
 
@@ -44,12 +44,12 @@ func New(cfg config.Config) Database {
 	db, err := gorm.Open(dialector, &gorm.Config{})
 	if err != nil {
 		slog.Error("failed to connect to database", "err", err)
-		return Database{}
+		return Storage{}
 	}
 
-	return Database{ORM: db}
+	return Storage{db}
 }
 
-func (db *Database) AutoMigrate() error {
-	return db.ORM.AutoMigrate(model.User{})
+func (db *Storage) AutoMigrate() error {
+	return db.DB.AutoMigrate(model.User{})
 }

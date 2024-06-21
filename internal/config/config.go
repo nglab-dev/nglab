@@ -28,10 +28,18 @@ type Database struct {
 	Params   string `json:"params" mapstructure:"params"`
 }
 
+type Auth struct {
+	Enabled       bool     `json:"enabled" mapstructure:"enabled"`
+	JWTSecret     string   `json:"jwt_secret" mapstructure:"jwt_secret"`
+	JWTExpireTime int      `json:"jwt_expire_time" mapstructure:"jwt_expire_time"`
+	IgnorePaths   []string `json:"ignore_paths" mapstructure:"ignore_paths"`
+}
+
 type Config struct {
 	App      *App      `json:"app" mapstructure:"app"`
 	Server   *Server   `json:"server" mapstructure:"server"`
 	Database *Database `json:"database" mapstructure:"database"`
+	Auth     *Auth     `json:"auth" mapstructure:"auth"`
 }
 
 var configFilePath = "./configs/config.yaml"
@@ -47,6 +55,12 @@ var defaultConfig = Config{
 	Database: &Database{
 		Dialect: "sqlite",
 		Name:    "./data/nglab.db",
+	},
+	Auth: &Auth{
+		Enabled:       true,
+		JWTSecret:     "nglab",
+		JWTExpireTime: 3600,
+		IgnorePaths:   []string{"/api/v1/login", "/api/v1/register"},
 	},
 }
 
