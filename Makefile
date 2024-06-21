@@ -10,21 +10,24 @@ else
 	BIN=./bin/nglab
 endif
 
+GO_ENV=CGO_ENABLED=0 GO111MODULE=on
+GO=$(GO_ENV) go
+
 migrate:
-	@go run . migrate
+	@$(GO) run . migrate
 
 swag:
-	@go run github.com/swaggo/swag/cmd/swag@latest init
+	@$(GO) run github.com/swaggo/swag/cmd/swag@latest init
 
 build:swag
-	@go build -o $(BIN) .
+	@$(GO) build -o $(BIN) .
 
 run:
-	@go run . run
+	@$(GO) run . run
 
 watch:
-	@go run github.com/cosmtrek/air@v1.51.0 \
-		--build.cmd "go build -o $(BIN) ." \
+	@$(GO) run github.com/cosmtrek/air@v1.51.0 \
+		--build.cmd "$(GO) build -o $(BIN) ." \
 		--build.bin "$(BIN) run" \
 		--build.delay "100" \
 		--build.exclude_dir "node_modules" \
