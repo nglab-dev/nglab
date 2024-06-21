@@ -1,6 +1,6 @@
 package service
 
-import "github.com/nglab-dev/nglab/internal/repo"
+import "github.com/nglab-dev/nglab/api/repo"
 
 type AuthService struct {
 	userRepo repo.UserRepo

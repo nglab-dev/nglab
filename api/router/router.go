@@ -3,7 +3,6 @@ package router
 import "go.uber.org/fx"
 
 var Module = fx.Options(
-	fx.Provide(NewViewRouter),
 	fx.Provide(NewRouter),
 )
 
@@ -16,10 +15,8 @@ type IRoute interface {
 type Routes []IRoute
 
 // New returns a new router.
-func NewRouter(viewRouter ViewRouter) Routes {
-	return Routes{
-		viewRouter,
-	}
+func NewRouter() Routes {
+	return Routes{}
 }
 
 // Setup set all routes.

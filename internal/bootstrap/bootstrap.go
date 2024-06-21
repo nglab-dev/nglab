@@ -6,13 +6,13 @@ import (
 	"log/slog"
 	"net/http"
 
+	"github.com/nglab-dev/nglab/api/handler"
+	"github.com/nglab-dev/nglab/api/repo"
+	"github.com/nglab-dev/nglab/api/router"
+	"github.com/nglab-dev/nglab/api/service"
 	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/internal/database"
-	"github.com/nglab-dev/nglab/internal/handler"
-	"github.com/nglab-dev/nglab/internal/repo"
-	"github.com/nglab-dev/nglab/internal/router"
 	"github.com/nglab-dev/nglab/internal/serve"
-	"github.com/nglab-dev/nglab/internal/service"
 	"go.uber.org/fx"
 )
 

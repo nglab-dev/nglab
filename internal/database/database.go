@@ -5,8 +5,8 @@ import (
 	"path/filepath"
 
 	"github.com/glebarez/sqlite"
+	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/internal/config"
-	"github.com/nglab-dev/nglab/internal/model"
 	"github.com/nglab-dev/nglab/internal/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"

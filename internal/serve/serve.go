@@ -10,7 +10,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/config"
-	"github.com/nglab-dev/nglab/public"
 	sloggin "github.com/samber/slog-gin"
 )
 
@@ -30,24 +29,8 @@ func New(cfg config.Config) Server {
 	router.Use(sloggin.New(logger))
 	router.Use(gin.Recovery())
 
-	render := router.HTMLRender
-	router.HTMLRender = &HTMLTemplRenderer{FallbackHtmlRenderer: render}
-
 	// Disable trusted proxy warning.
 	router.SetTrustedProxies(nil)
-
-	if cfg.App.IsDev() {
-		// disable caching
-		router.Use(func(c *gin.Context) {
-			c.Header("Cache-Control", "no-cache, no-store, must-revalidate")
-			c.Header("Pragma", "no-cache")
-			c.Header("Expires", "0")
-			c.Next()
-		})
-		router.StaticFS("/public", http.Dir("./public"))
-	} else {
-		router.StaticFS("/public", http.FS(public.AssetsFS))
-	}
 
 	srv := &http.Server{
 		Addr:    cfg.Server.ListenAddr(),
