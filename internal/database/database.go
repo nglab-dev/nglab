@@ -7,7 +7,7 @@ import (
 	"github.com/glebarez/sqlite"
 	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/internal/config"
-	"github.com/nglab-dev/nglab/internal/utils"
+	"github.com/nglab-dev/nglab/pkg/utils"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

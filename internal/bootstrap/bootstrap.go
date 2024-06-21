@@ -12,7 +12,7 @@ import (
 	"github.com/nglab-dev/nglab/api/service"
 	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/internal/database"
-	"github.com/nglab-dev/nglab/internal/serve"
+	"github.com/nglab-dev/nglab/internal/server"
 	"go.uber.org/fx"
 )
 
@@ -21,14 +21,15 @@ var Module = fx.Options(
 	router.Module,
 	service.Module,
 	repo.Module,
-	fx.Provide(serve.New),
+	// base module
+	fx.Provide(server.New),
 	fx.Provide(config.New),
 	fx.Provide(database.New),
 	// invoke the bootstrap function
 	fx.Invoke(bootstrap),
 )
 
-func bootstrap(lc fx.Lifecycle, cfg config.Config, srv serve.Server, routes router.Routes, db database.Database) {
+func bootstrap(lc fx.Lifecycle, cfg config.Config, srv server.Server, routes router.Routes, db database.Database) {
 	dbConn, err := db.ORM.DB()
 	if err != nil {
 		slog.Error("Error connecting to the database: %v", err)

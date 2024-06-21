@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/go-playground/validator/v10"
-	"github.com/nglab-dev/nglab/internal/utils"
+	"github.com/nglab-dev/nglab/pkg/utils"
 	"github.com/spf13/viper"
 )
 

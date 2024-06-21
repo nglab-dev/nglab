@@ -13,7 +13,10 @@ endif
 migrate:
 	@go run . migrate
 
-build:
+swag:
+	@go run github.com/swaggo/swag/cmd/swag@latest init
+
+build:swag
 	@go build -o $(BIN) .
 
 run:

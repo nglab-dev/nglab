@@ -1,4 +1,4 @@
-package serve
+package server
 
 import (
 	"context"
@@ -9,8 +9,11 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nglab-dev/nglab/docs"
 	"github.com/nglab-dev/nglab/internal/config"
 	sloggin "github.com/samber/slog-gin"
+	swaggerfiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 const DefaultShutdownTimeout = time.Minute
@@ -29,8 +32,9 @@ func New(cfg config.Config) Server {
 	router.Use(sloggin.New(logger))
 	router.Use(gin.Recovery())
 
-	// Disable trusted proxy warning.
-	router.SetTrustedProxies(nil)
+	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
+
+	docs.SwaggerInfo.BasePath = "/api/v1"
 
 	srv := &http.Server{
 		Addr:    cfg.Server.ListenAddr(),
