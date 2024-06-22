@@ -20,9 +20,9 @@ func NewUserRouter(srv server.Server, userHandler handler.UserHandler) UserRoute
 }
 
 func (r UserRouter) Setup() {
-	api := r.srv.Router.Use()
+	api := r.srv.Router
 	{
-		api.POST("/users/{id}", r.userHandler.HandleGet)
+		api.GET("/users/:id", r.userHandler.Get)
 	}
-	slog.Info("Auth router is setup")
+	slog.Info("User router is setup")
 }

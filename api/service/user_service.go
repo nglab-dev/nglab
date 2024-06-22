@@ -8,19 +8,16 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-// UserService user service layer
 type UserService struct {
 	userRepo repo.UserRepo
 }
 
-// NewUserService create new user service
 func NewUserService(userRepo repo.UserRepo) UserService {
 	return UserService{
 		userRepo,
 	}
 }
 
-// Create user
 func (s UserService) Create(user *model.User) error {
 	if u, err := s.userRepo.GetByUsername(user.Username); err == nil && u != nil {
 		return errors.New("username already exists")
@@ -54,6 +51,6 @@ func (s UserService) Verify(username, password string) (*model.User, error) {
 	return user, nil
 }
 
-func (s UserService) GetByID(id uint) (*model.User, error) {
-	return s.userRepo.GetByID(id)
+func (s UserService) Get(id uint) (*model.User, error) {
+	return s.userRepo.Get(id)
 }

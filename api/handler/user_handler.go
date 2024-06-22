@@ -15,12 +15,18 @@ func NewUserHandler(userService service.UserService) UserHandler {
 	return UserHandler{userService}
 }
 
-func (h UserHandler) HandleGet(ctx *gin.Context) {
+// @Tags User
+// @Summary User Get By ID
+// @Produce application/json
+// @Param id path int true "user id"
+// @Success 200 {object} model.User
+// @router /users/{id} [get]
+func (h UserHandler) Get(ctx *gin.Context) {
 	id := ctx.Param("id")
 
 	userId, _ := strconv.Atoi(id)
 
-	user, err := h.userService.GetByID(uint(userId))
+	user, err := h.userService.Get(uint(userId))
 	if err != nil {
 		newResponse(ctx).Error(err.Error())
 	}

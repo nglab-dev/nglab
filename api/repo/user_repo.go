@@ -2,14 +2,14 @@ package repo
 
 import (
 	"github.com/nglab-dev/nglab/api/model"
-	"github.com/nglab-dev/nglab/internal/storage"
+	"github.com/nglab-dev/nglab/internal/database"
 )
 
 type UserRepo struct {
-	db storage.Storage
+	db database.Database
 }
 
-func NewUserRepo(db storage.Storage) UserRepo {
+func NewUserRepo(db database.Database) UserRepo {
 	return UserRepo{db}
 }
 
@@ -27,7 +27,7 @@ func (r UserRepo) Create(user *model.User) (err error) {
 	return
 }
 
-func (r UserRepo) GetByID(id uint) (user *model.User, err error) {
+func (r UserRepo) Get(id uint) (user *model.User, err error) {
 	if err = r.db.DB.Where("id = ?", id).First(&user).Error; err != nil {
 		return nil, err
 	}

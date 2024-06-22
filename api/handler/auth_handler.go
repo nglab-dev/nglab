@@ -18,14 +18,12 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 	}
 }
 
-// LoginHandler handles login requests
+// @Tags Auth
 // @Summary Login user
-// @Description Login user with username and password
-// @Tags auth
 // @Accept json
 // @Produce json
 // @Param request body model.LoginRequest true "Login request"
-// @Success 200 {object} model.LoginResponse
+// @Success 200 {object} Response{data=model.LoginResponse}
 // @Router /login [post]
 func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 	var req model.LoginRequest
@@ -52,14 +50,12 @@ func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 	})
 }
 
-// RegisterHandler handles registration requests
+// @Tags Auth
 // @Summary Register user
-// @Description Register user with username and password
-// @Tags auth
 // @Accept json
 // @Produce json
 // @Param request body model.RegisterRequest true "Register request"
-// @Success 200 {object} model.RegisterResponse
+// @Success 200 {object} Response{data=model.RegisterResponse}
 // @Router /register [post]
 func (a *AuthHandler) HandleRegister(ctx *gin.Context) {
 	req := &model.RegisterRequest{}

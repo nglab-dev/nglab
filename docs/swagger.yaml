@@ -1,5 +1,16 @@
 basePath: /api/v1
 definitions:
+  handler.Response:
+    properties:
+      code:
+        description: 响应状态码
+        type: integer
+      data:
+        description: 响应数据
+      message:
+        description: 响应消息
+        type: string
+    type: object
   model.LoginRequest:
     properties:
       password:
@@ -30,6 +41,19 @@ definitions:
       id:
         type: integer
     type: object
+  model.User:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      password:
+        type: string
+      updated_at:
+        type: string
+      username:
+        type: string
+    type: object
 info:
   contact: {}
   description: This is a sample server celler server.
@@ -40,7 +64,6 @@ paths:
     post:
       consumes:
       - application/json
-      description: Login user with username and password
       parameters:
       - description: Login request
         in: body
@@ -54,15 +77,19 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.LoginResponse'
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.LoginResponse'
+              type: object
       summary: Login user
       tags:
-      - auth
+      - Auth
   /register:
     post:
       consumes:
       - application/json
-      description: Register user with username and password
       parameters:
       - description: Register request
         in: body
@@ -76,10 +103,33 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.RegisterResponse'
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.RegisterResponse'
+              type: object
       summary: Register user
       tags:
-      - auth
+      - Auth
+  /users/{id}:
+    get:
+      parameters:
+      - description: user id
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.User'
+      summary: User Get By ID
+      tags:
+      - User
 securityDefinitions:
   ApiKeyAuth:
     in: header

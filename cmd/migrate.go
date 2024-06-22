@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"github.com/nglab-dev/nglab/internal/config"
-	"github.com/nglab-dev/nglab/internal/storage"
+	"github.com/nglab-dev/nglab/internal/database"
 	"github.com/spf13/cobra"
 )
 
@@ -19,14 +19,14 @@ var migrateCmd = &cobra.Command{
 func runMigrateCmd() {
 	cfg := config.New()
 
-	storage := storage.New(cfg)
-	sqlDB, err := storage.DB.DB()
+	db := database.New(cfg)
+	sqlDB, err := db.DB.DB()
 	if err != nil {
 		panic(err)
 	}
 	defer sqlDB.Close()
 
-	if err = storage.AutoMigrate(); err != nil {
+	if err = db.AutoMigrate(); err != nil {
 		panic(err)
 	}
 }

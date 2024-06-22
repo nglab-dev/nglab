@@ -10,15 +10,15 @@ import (
 	"github.com/nglab-dev/nglab/api/router"
 	"github.com/nglab-dev/nglab/api/service"
 	"github.com/nglab-dev/nglab/internal/config"
+	"github.com/nglab-dev/nglab/internal/database"
 	"github.com/nglab-dev/nglab/internal/server"
-	"github.com/nglab-dev/nglab/internal/storage"
 	"go.uber.org/fx"
 )
 
 var Module = fx.Options(
 	// base modules
 	fx.Provide(config.New),
-	fx.Provide(storage.New),
+	fx.Provide(database.New),
 	fx.Provide(server.New),
 
 	// api modules
@@ -35,12 +35,12 @@ var Module = fx.Options(
 func bootstrap(
 	lc fx.Lifecycle,
 	cfg config.Config,
-	storage storage.Storage,
+	db database.Database,
 	srv server.Server,
 	routes router.Routes,
 	middleware middleware.Middlewares,
 ) {
-	dbConn, err := storage.DB.DB()
+	dbConn, err := db.DB.DB()
 	if err != nil {
 		slog.Error("Error connecting to the database: %v", err)
 	}
