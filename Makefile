@@ -14,7 +14,7 @@ migrate:
 	@go run . migrate
 
 swag:
-	@go run github.com/swaggo/swag/cmd/swag@latest init
+	@go run github.com/swaggo/swag/cmd/swag@latest init  --parseDependency
 
 build:swag
 	@go build -o $(BIN) .

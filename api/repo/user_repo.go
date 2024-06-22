@@ -26,3 +26,10 @@ func (r UserRepo) Create(user *model.User) (err error) {
 	err = r.db.DB.Create(user).Error
 	return
 }
+
+func (r UserRepo) GetByID(id uint) (user *model.User, err error) {
+	if err = r.db.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return user, nil
+}

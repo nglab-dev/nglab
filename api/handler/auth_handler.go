@@ -30,24 +30,24 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 	var req model.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		newResponse(ctx).BadRequest(err.Error())
 		return
 	}
 
 	user, err := a.userService.Verify(req.Username, req.Password)
 	if err != nil {
-		ctx.JSON(401, gin.H{"error": "Invalid credentials"})
+
 		return
 	}
 
 	// Generate JWT token
 	token, err := a.authService.GenerateToken(user.ID)
 	if err != nil {
-		ctx.JSON(500, gin.H{"error": "Failed to generate token"})
+		newResponse(ctx).Error(err.Error())
 		return
 	}
 
-	ctx.JSON(200, model.LoginResponse{
+	newResponse(ctx).OK(model.LoginResponse{
 		Token: token,
 	})
 }

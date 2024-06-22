@@ -53,3 +53,7 @@ func (s UserService) Verify(username, password string) (*model.User, error) {
 
 	return user, nil
 }
+
+func (s UserService) GetByID(id uint) (*model.User, error) {
+	return s.userRepo.GetByID(id)
+}
