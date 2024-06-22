@@ -41,3 +41,6 @@ data/
 
 # node
 node_modules
+
+# idea
+.idea/
