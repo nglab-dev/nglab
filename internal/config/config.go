@@ -35,11 +35,20 @@ type Auth struct {
 	IgnorePaths   []string `json:"ignore_paths" mapstructure:"ignore_paths"`
 }
 
+type Redis struct {
+	Host     string `mapstructure:"host" yaml:"host"`
+	Port     int    `mapstructure:"port" yaml:"port"`
+	Password string `mapstructure:"password" yaml:"password"`
+	DB       int    `mapstructure:"db" yaml:"db"`
+	PoolSize int    `mapstructure:"pool_size" yaml:"pool_size"`
+}
+
 type Config struct {
 	App      *App      `json:"app" mapstructure:"app"`
 	Server   *Server   `json:"server" mapstructure:"server"`
 	Database *Database `json:"database" mapstructure:"database"`
 	Auth     *Auth     `json:"auth" mapstructure:"auth"`
+	Redis    *Redis    `json:"redis" mapstructure:"redis"`
 }
 
 var configFilePath = "./configs/config.yaml"
@@ -61,6 +70,13 @@ var defaultConfig = Config{
 		JWTSecret:     "nglab",
 		JWTExpireTime: 3600,
 		IgnorePaths:   []string{"/api/v1/login", "/api/v1/register"},
+	},
+	Redis: &Redis{
+		Host:     "127.0.0.1",
+		Port:     6379,
+		Password: "",
+		DB:       0,
+		PoolSize: 10,
 	},
 }
 
@@ -113,4 +129,12 @@ func (a *App) IsDev() bool {
 
 func (a *App) IsProd() bool {
 	return a.Env == "prod"
+}
+
+func (a *Redis) Addr() string {
+	if err := validator.New().Struct(a); err != nil {
+		return defaultConfig.Redis.Addr()
+	}
+
+	return fmt.Sprintf("%s:%d", a.Host, a.Port)
 }

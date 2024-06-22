@@ -11,6 +11,7 @@ import (
 	"github.com/nglab-dev/nglab/api/service"
 	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/internal/database"
+	"github.com/nglab-dev/nglab/internal/redis"
 	"github.com/nglab-dev/nglab/internal/server"
 	"go.uber.org/fx"
 )
@@ -18,8 +19,9 @@ import (
 var Module = fx.Options(
 	// base modules
 	fx.Provide(config.New),
-	fx.Provide(database.New),
 	fx.Provide(server.New),
+	fx.Provide(database.New),
+	fx.Provide(redis.New),
 
 	// api modules
 	handler.Module,
@@ -50,8 +52,8 @@ func bootstrap(
 			slog.Info("Starting app...")
 
 			go func() {
-				routes.Setup()
 				middleware.Setup()
+				routes.Setup()
 
 				if err := srv.Start(); err != nil {
 					slog.Error("Error starting the Application: %v", err)

@@ -1,10 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "description": "This is a sample server celler server.",
-        "title": "NGLab API",
-        "contact": {},
-        "version": "1.0"
+        "contact": {}
     },
     "basePath": "/api/v1",
     "paths": {
@@ -144,6 +141,18 @@
                 }
             }
         },
+        "model.Datetime": {
+            "type": "object",
+            "properties": {
+                "time": {
+                    "type": "string"
+                },
+                "valid": {
+                    "description": "Valid is true if Time is not NULL",
+                    "type": "boolean"
+                }
+            }
+        },
         "model.LoginRequest": {
             "type": "object",
             "required": [
@@ -194,16 +203,13 @@
             "type": "object",
             "properties": {
                 "created_at": {
-                    "type": "string"
+                    "$ref": "#/definitions/model.Datetime"
                 },
                 "id": {
                     "type": "integer"
                 },
-                "password": {
-                    "type": "string"
-                },
                 "updated_at": {
-                    "type": "string"
+                    "$ref": "#/definitions/model.Datetime"
                 },
                 "username": {
                     "type": "string"
@@ -212,7 +218,7 @@
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "Authorization": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"

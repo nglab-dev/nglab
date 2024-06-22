@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"fmt"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/api/service"
@@ -28,25 +30,25 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 	var req model.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		newResponse(ctx).BadRequest(err.Error())
+		NewResponse(ctx).BadRequest(err.Error())
 		return
 	}
 
 	user, err := a.userService.Verify(req.Username, req.Password)
 	if err != nil {
-
+		NewResponse(ctx).Error(err.Error())
 		return
 	}
 
 	// Generate JWT token
 	token, err := a.authService.GenerateToken(user.ID)
 	if err != nil {
-		newResponse(ctx).Error(err.Error())
+		NewResponse(ctx).Error(err.Error())
 		return
 	}
 
-	newResponse(ctx).OK(model.LoginResponse{
-		Token: token,
+	NewResponse(ctx).OK(model.LoginResponse{
+		Token: fmt.Sprintf("Bearer %s", token),
 	})
 }
 

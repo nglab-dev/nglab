@@ -15,7 +15,7 @@ type response struct {
 	ctx *gin.Context
 }
 
-func newResponse(ctx *gin.Context) *response {
+func NewResponse(ctx *gin.Context) *response {
 	return &response{
 		ctx: ctx,
 	}
@@ -53,7 +53,7 @@ func (r *response) Error(message string) {
 	})
 }
 
-func (r *response) CustomError(code int, message string) {
+func (r *response) ErrorWithCode(code int, message string) {
 	r.ctx.JSON(200, Response{
 		Code:    code,
 		Message: message,

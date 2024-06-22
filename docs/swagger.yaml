@@ -11,6 +11,14 @@ definitions:
         description: 响应消息
         type: string
     type: object
+  model.Datetime:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
   model.LoginRequest:
     properties:
       password:
@@ -44,21 +52,16 @@ definitions:
   model.User:
     properties:
       created_at:
-        type: string
+        $ref: '#/definitions/model.Datetime'
       id:
         type: integer
-      password:
-        type: string
       updated_at:
-        type: string
+        $ref: '#/definitions/model.Datetime'
       username:
         type: string
     type: object
 info:
   contact: {}
-  description: This is a sample server celler server.
-  title: NGLab API
-  version: "1.0"
 paths:
   /login:
     post:
@@ -131,7 +134,7 @@ paths:
       tags:
       - User
 securityDefinitions:
-  ApiKeyAuth:
+  Authorization:
     in: header
     name: Authorization
     type: apiKey

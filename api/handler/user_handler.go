@@ -28,7 +28,7 @@ func (h UserHandler) Get(ctx *gin.Context) {
 
 	user, err := h.userService.Get(uint(userId))
 	if err != nil {
-		newResponse(ctx).Error(err.Error())
+		NewResponse(ctx).Error(err.Error())
 	}
-	newResponse(ctx).OK(user)
+	NewResponse(ctx).OK(user)
 }
