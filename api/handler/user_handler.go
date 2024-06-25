@@ -17,10 +17,10 @@ func NewUserHandler(userService service.UserService) UserHandler {
 
 // @Tags User
 // @Summary User Get By ID
-// @Produce application/json
+// @Produce json
 // @Param id path int true "user id"
-// @Success 200 {object} model.User
-// @router /users/{id} [get]
+// @Success 200 {object} Response{data=model.User}
+// @Router /users/{id} [get]
 func (h UserHandler) Get(ctx *gin.Context) {
 	id := ctx.Param("id")
 

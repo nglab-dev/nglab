@@ -14,7 +14,7 @@ migrate:
 	@go run . migrate
 
 swag:
-	@go run github.com/swaggo/swag/cmd/swag@latest init  --parseDependency
+	@go run github.com/swaggo/swag/cmd/swag@latest init --parseDependency
 
 build:swag
 	@go build -o $(BIN) .
@@ -27,7 +27,7 @@ watch:
 		--build.cmd "go build -o $(BIN) ." \
 		--build.bin "$(BIN) run" \
 		--build.delay "100" \
-		--build.exclude_dir "node_modules" \
+		--build.exclude_dir "node_modules,*.db" \
 		--build.include_ext "go" \
 		--build.stop_on_error "false" \
 		--misc.clean_on_exit true

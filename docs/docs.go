@@ -127,7 +127,19 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/model.User"
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/handler.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.User"
+                                        }
+                                    }
+                                }
+                            ]
                         }
                     }
                 }
@@ -212,14 +224,38 @@ const docTemplate = `{
         "model.User": {
             "type": "object",
             "properties": {
+                "avatar_url": {
+                    "type": "string"
+                },
                 "created_at": {
                     "$ref": "#/definitions/model.Datetime"
+                },
+                "created_by": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "enabled": {
+                    "type": "integer"
                 },
                 "id": {
                     "type": "integer"
                 },
+                "phone": {
+                    "type": "string"
+                },
+                "real_name": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "integer"
+                },
                 "updated_at": {
                     "$ref": "#/definitions/model.Datetime"
+                },
+                "updated_by": {
+                    "type": "string"
                 },
                 "username": {
                     "type": "string"
@@ -228,7 +264,7 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "Authorization": {
+        "ApiKeyAuth": {
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -240,7 +276,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "",
 	Description:      "",

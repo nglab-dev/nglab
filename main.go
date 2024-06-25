@@ -4,8 +4,7 @@ import (
 	"github.com/nglab-dev/nglab/cmd"
 )
 
-// @basePath /api/v1
-// @securityDefinitions.apikey Authorization
+// @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
 func main() {

@@ -34,7 +34,7 @@ func New(cfg config.Config) Server {
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
-	docs.SwaggerInfo.BasePath = "/api/v1"
+	docs.SwaggerInfo.BasePath = "/api"
 
 	srv := &http.Server{
 		Addr:    cfg.Server.ListenAddr(),
@@ -43,7 +43,7 @@ func New(cfg config.Config) Server {
 
 	return Server{
 		srv,
-		router.Group("/api/v1"),
+		router.Group("/api"),
 	}
 }
 

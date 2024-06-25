@@ -1,4 +1,3 @@
-basePath: /api/v1
 definitions:
   handler.Response:
     properties:
@@ -51,12 +50,28 @@ definitions:
     type: object
   model.User:
     properties:
+      avatar_url:
+        type: string
       created_at:
         $ref: '#/definitions/model.Datetime'
+      created_by:
+        type: string
+      email:
+        type: string
+      enabled:
+        type: integer
       id:
+        type: integer
+      phone:
+        type: string
+      real_name:
+        type: string
+      type:
         type: integer
       updated_at:
         $ref: '#/definitions/model.Datetime'
+      updated_by:
+        type: string
       username:
         type: string
     type: object
@@ -129,12 +144,17 @@ paths:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/model.User'
+            allOf:
+            - $ref: '#/definitions/handler.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
       summary: User Get By ID
       tags:
       - User
 securityDefinitions:
-  Authorization:
+  ApiKeyAuth:
     in: header
     name: Authorization
     type: apiKey

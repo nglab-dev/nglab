@@ -69,7 +69,7 @@ var defaultConfig = Config{
 		Enabled:       true,
 		JWTSecret:     "nglab",
 		JWTExpireTime: 3600,
-		IgnorePaths:   []string{"/api/v1/login", "/api/v1/register"},
+		IgnorePaths:   []string{"/api/login", "/api/register"},
 	},
 	Redis: &Redis{
 		Host:     "127.0.0.1",
