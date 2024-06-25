@@ -23,7 +23,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.LoginRequest"
+                            "$ref": "#/definitions/schema.LoginRequest"
                         }
                     }
                 ],
@@ -33,13 +33,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.Response"
+                                    "$ref": "#/definitions/handler.ResponseBody"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.LoginResponse"
+                                            "$ref": "#/definitions/schema.LoginResponse"
                                         }
                                     }
                                 }
@@ -68,7 +68,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.RegisterRequest"
+                            "$ref": "#/definitions/schema.RegisterRequest"
                         }
                     }
                 ],
@@ -78,13 +78,13 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.Response"
+                                    "$ref": "#/definitions/handler.ResponseBody"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.RegisterResponse"
+                                            "$ref": "#/definitions/schema.RegisterResponse"
                                         }
                                     }
                                 }
@@ -118,7 +118,7 @@
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.Response"
+                                    "$ref": "#/definitions/handler.ResponseBody"
                                 },
                                 {
                                     "type": "object",
@@ -136,18 +136,14 @@
         }
     },
     "definitions": {
-        "handler.Response": {
+        "handler.ResponseBody": {
             "type": "object",
             "properties": {
                 "code": {
-                    "description": "响应状态码",
                     "type": "integer"
                 },
-                "data": {
-                    "description": "响应数据"
-                },
-                "message": {
-                    "description": "响应消息",
+                "data": {},
+                "msg": {
                     "type": "string"
                 }
             }
@@ -161,52 +157,6 @@
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
-                }
-            }
-        },
-        "model.LoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.LoginResponse": {
-            "type": "object",
-            "properties": {
-                "token": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.RegisterRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "model.RegisterResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "integer"
                 }
             }
         },
@@ -248,6 +198,52 @@
                 },
                 "username": {
                     "type": "string"
+                }
+            }
+        },
+        "schema.LoginRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.LoginResponse": {
+            "type": "object",
+            "properties": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "schema.RegisterResponse": {
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "integer"
                 }
             }
         }

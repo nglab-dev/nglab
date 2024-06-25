@@ -1,4 +1,4 @@
-package model
+package schema
 
 import "github.com/golang-jwt/jwt/v5"
 
@@ -13,7 +13,7 @@ type LoginRequest struct {
 }
 
 type LoginResponse struct {
-	Token string `json:"token"`
+	AccessToken string `json:"access_token"`
 }
 
 type RegisterRequest struct {

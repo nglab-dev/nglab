@@ -2,13 +2,10 @@ package handler
 
 import "github.com/gin-gonic/gin"
 
-type Response struct {
-	// 响应状态码
-	Code int `json:"code"`
-	// 响应消息
-	Message string `json:"message"`
-	// 响应数据
-	Data any `json:"data"`
+type ResponseBody struct {
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data any    `json:"data,omitempty" `
 }
 
 type response struct {
@@ -22,41 +19,41 @@ func NewResponse(ctx *gin.Context) *response {
 }
 
 func (r *response) OK(data any) {
-	r.ctx.JSON(200, Response{
-		Code:    0,
-		Message: "OK",
-		Data:    data,
+	r.ctx.JSON(200, ResponseBody{
+		Code: 0,
+		Msg:  "OK",
+		Data: data,
 	})
 }
 
-func (r *response) BadRequest(message string) {
-	r.ctx.JSON(200, Response{
-		Code:    400,
-		Message: message,
-		Data:    nil,
+func (r *response) BadRequest(msg string) {
+	r.ctx.JSON(200, ResponseBody{
+		Code: 400,
+		Msg:  msg,
+		Data: nil,
 	})
 }
 
-func (r *response) Unauthorized(message string) {
-	r.ctx.JSON(200, Response{
-		Code:    401,
-		Message: message,
-		Data:    nil,
+func (r *response) Unauthorized(msg string) {
+	r.ctx.JSON(200, ResponseBody{
+		Code: 401,
+		Msg:  msg,
+		Data: nil,
 	})
 }
 
-func (r *response) Error(message string) {
-	r.ctx.JSON(200, Response{
-		Code:    1,
-		Message: message,
-		Data:    nil,
+func (r *response) Error(msg string) {
+	r.ctx.JSON(200, ResponseBody{
+		Code: 1,
+		Msg:  msg,
+		Data: nil,
 	})
 }
 
-func (r *response) ErrorWithCode(code int, message string) {
-	r.ctx.JSON(200, Response{
-		Code:    code,
-		Message: message,
-		Data:    nil,
+func (r *response) ErrorWithCode(code int, msg string) {
+	r.ctx.JSON(200, ResponseBody{
+		Code: code,
+		Msg:  msg,
+		Data: nil,
 	})
 }

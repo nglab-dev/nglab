@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/nglab-dev/nglab/api/model"
+	"github.com/nglab-dev/nglab/api/schema"
 	"github.com/nglab-dev/nglab/internal/config"
 )
 
@@ -33,7 +33,7 @@ func NewAuthService(cfg config.Config) AuthService {
 
 func (a AuthService) GenerateToken(userID uint) (string, error) {
 	expiresAt := time.Now().Add(a.jwtConfig.expiration)
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, model.JWTClaims{
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, schema.JWTClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
@@ -50,7 +50,7 @@ func (a AuthService) GenerateToken(userID uint) (string, error) {
 	return token, nil
 }
 
-func (a AuthService) ValidateToken(tokenString string) (*model.JWTClaims, error) {
+func (a AuthService) ValidateToken(tokenString string) (*schema.JWTClaims, error) {
 	re := regexp.MustCompile(`(?i)Bearer `)
 	tokenString = re.ReplaceAllString(tokenString, "")
 	if tokenString == "" {
@@ -63,5 +63,5 @@ func (a AuthService) ValidateToken(tokenString string) (*model.JWTClaims, error)
 	if err != nil {
 		return nil, err
 	}
-	return token.Claims.(*model.JWTClaims), nil
+	return token.Claims.(*schema.JWTClaims), nil
 }

@@ -1,13 +1,10 @@
 definitions:
-  handler.Response:
+  handler.ResponseBody:
     properties:
       code:
-        description: 响应状态码
         type: integer
-      data:
-        description: 响应数据
-      message:
-        description: 响应消息
+      data: {}
+      msg:
         type: string
     type: object
   model.Datetime:
@@ -17,36 +14,6 @@ definitions:
       valid:
         description: Valid is true if Time is not NULL
         type: boolean
-    type: object
-  model.LoginRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  model.LoginResponse:
-    properties:
-      token:
-        type: string
-    type: object
-  model.RegisterRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  model.RegisterResponse:
-    properties:
-      id:
-        type: integer
     type: object
   model.User:
     properties:
@@ -75,6 +42,36 @@ definitions:
       username:
         type: string
     type: object
+  schema.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  schema.LoginResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  schema.RegisterRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  schema.RegisterResponse:
+    properties:
+      id:
+        type: integer
+    type: object
 info:
   contact: {}
 paths:
@@ -88,7 +85,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/model.LoginRequest'
+          $ref: '#/definitions/schema.LoginRequest'
       produces:
       - application/json
       responses:
@@ -96,10 +93,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/handler.Response'
+            - $ref: '#/definitions/handler.ResponseBody'
             - properties:
                 data:
-                  $ref: '#/definitions/model.LoginResponse'
+                  $ref: '#/definitions/schema.LoginResponse'
               type: object
       summary: Login user
       tags:
@@ -114,7 +111,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/model.RegisterRequest'
+          $ref: '#/definitions/schema.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -122,10 +119,10 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/handler.Response'
+            - $ref: '#/definitions/handler.ResponseBody'
             - properties:
                 data:
-                  $ref: '#/definitions/model.RegisterResponse'
+                  $ref: '#/definitions/schema.RegisterResponse'
               type: object
       summary: Register user
       tags:
@@ -145,7 +142,7 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/handler.Response'
+            - $ref: '#/definitions/handler.ResponseBody'
             - properties:
                 data:
                   $ref: '#/definitions/model.User'

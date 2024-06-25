@@ -5,6 +5,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/api/model"
+	"github.com/nglab-dev/nglab/api/schema"
 	"github.com/nglab-dev/nglab/api/service"
 )
 
@@ -24,11 +25,11 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 // @Summary Login user
 // @Accept json
 // @Produce json
-// @Param request body model.LoginRequest true "Login request"
-// @Success 200 {object} Response{data=model.LoginResponse}
+// @Param request body schema.LoginRequest true "Login request"
+// @Success 200 {object} ResponseBody{data=schema.LoginResponse}
 // @Router /login [post]
 func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
-	var req model.LoginRequest
+	var req schema.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		NewResponse(ctx).BadRequest(err.Error())
 		return
@@ -47,8 +48,8 @@ func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 		return
 	}
 
-	NewResponse(ctx).OK(model.LoginResponse{
-		Token: fmt.Sprintf("Bearer %s", token),
+	NewResponse(ctx).OK(schema.LoginResponse{
+		AccessToken: fmt.Sprintf("Bearer %s", token),
 	})
 }
 
@@ -56,11 +57,11 @@ func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 // @Summary Register user
 // @Accept json
 // @Produce json
-// @Param request body model.RegisterRequest true "Register request"
-// @Success 200 {object} Response{data=model.RegisterResponse}
+// @Param request body schema.RegisterRequest true "Register request"
+// @Success 200 {object} ResponseBody{data=schema.RegisterResponse}
 // @Router /register [post]
 func (a *AuthHandler) HandleRegister(ctx *gin.Context) {
-	req := &model.RegisterRequest{}
+	req := &schema.RegisterRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
 		ctx.JSON(400, gin.H{"error": err.Error()})
 		return
@@ -76,7 +77,7 @@ func (a *AuthHandler) HandleRegister(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(200, model.RegisterResponse{
+	ctx.JSON(200, schema.RegisterResponse{
 		UserID: user.ID,
 	})
 }

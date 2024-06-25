@@ -40,10 +40,6 @@ func (s UserService) Verify(username, password string) (*model.User, error) {
 		return nil, err
 	}
 
-	if user == nil {
-		return nil, errors.New("user not found")
-	}
-
 	if err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password)); err != nil {
 		return nil, errors.New("invalid password")
 	}
