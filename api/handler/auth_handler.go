@@ -7,6 +7,7 @@ import (
 	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/api/schema"
 	"github.com/nglab-dev/nglab/api/service"
+	"github.com/nglab-dev/nglab/internal/constant"
 )
 
 type AuthHandler struct {
@@ -28,10 +29,10 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 // @Param request body schema.LoginRequest true "Login request"
 // @Success 200 {object} ResponseBody{data=schema.LoginResponse}
 // @Router /login [post]
-func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
+func (a *AuthHandler) Login(ctx *gin.Context) {
 	var req schema.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		NewResponse(ctx).BadRequest(err.Error())
+		NewResponse(ctx).BadRequest()
 		return
 	}
 
@@ -60,10 +61,10 @@ func (a *AuthHandler) HandleLogin(ctx *gin.Context) {
 // @Param request body schema.RegisterRequest true "Register request"
 // @Success 200 {object} ResponseBody{data=schema.RegisterResponse}
 // @Router /register [post]
-func (a *AuthHandler) HandleRegister(ctx *gin.Context) {
+func (a *AuthHandler) Register(ctx *gin.Context) {
 	req := &schema.RegisterRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
-		ctx.JSON(400, gin.H{"error": err.Error()})
+		NewResponse(ctx).BadRequest()
 		return
 	}
 
@@ -73,11 +74,34 @@ func (a *AuthHandler) HandleRegister(ctx *gin.Context) {
 	}
 
 	if err := a.userService.Create(user); err != nil {
-		ctx.JSON(500, gin.H{"error": err.Error()})
+		NewResponse(ctx).Error(err.Error())
 		return
 	}
 
-	ctx.JSON(200, schema.RegisterResponse{
+	NewResponse(ctx).OK(schema.RegisterResponse{
 		UserID: user.ID,
 	})
+}
+
+// @Tags Auth
+// @Summary Get auth user
+// @Accept json
+// @Produce json
+// @Success 200 {object} ResponseBody{data=model.User}
+// @Router /user [get]
+func (a *AuthHandler) GetUser(ctx *gin.Context) {
+	claims, exist := ctx.Get(constant.CurrentUserKey)
+	if !exist {
+		NewResponse(ctx).Unauthorized()
+		return
+	}
+
+	user, err := a.userService.Get(claims.(*schema.JWTClaims).UserID)
+
+	if err != nil {
+		NewResponse(ctx).Error(err.Error())
+		return
+	}
+
+	NewResponse(ctx).OK(user)
 }

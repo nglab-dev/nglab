@@ -127,6 +127,25 @@ paths:
       summary: Register user
       tags:
       - Auth
+  /user:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseBody'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      summary: Get auth user
+      tags:
+      - Auth
   /users/{id}:
     get:
       parameters:

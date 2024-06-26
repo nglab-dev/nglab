@@ -26,18 +26,18 @@ func (r *response) OK(data any) {
 	})
 }
 
-func (r *response) BadRequest(msg string) {
+func (r *response) BadRequest() {
 	r.ctx.JSON(200, ResponseBody{
 		Code: 400,
-		Msg:  msg,
+		Msg:  "",
 		Data: nil,
 	})
 }
 
-func (r *response) Unauthorized(msg string) {
+func (r *response) Unauthorized() {
 	r.ctx.JSON(200, ResponseBody{
 		Code: 401,
-		Msg:  msg,
+		Msg:  "",
 		Data: nil,
 	})
 }

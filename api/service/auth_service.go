@@ -56,12 +56,15 @@ func (a AuthService) ValidateToken(tokenString string) (*schema.JWTClaims, error
 	if tokenString == "" {
 		return nil, errors.New("token is empty")
 	}
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &schema.JWTClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(a.jwtConfig.secretKey), nil
-	})
-
+	}, jwt.WithLeeway(5*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	return token.Claims.(*schema.JWTClaims), nil
+	claims, ok := token.Claims.(*schema.JWTClaims)
+	if !ok {
+		return nil, errors.New("invalid token")
+	}
+	return claims, nil
 }

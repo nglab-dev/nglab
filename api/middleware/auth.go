@@ -8,6 +8,7 @@ import (
 	"github.com/nglab-dev/nglab/api/handler"
 	"github.com/nglab-dev/nglab/api/service"
 	"github.com/nglab-dev/nglab/internal/config"
+	"github.com/nglab-dev/nglab/internal/constant"
 	"github.com/nglab-dev/nglab/internal/server"
 )
 
@@ -42,7 +43,7 @@ func (auth AuthMiddleware) core() gin.HandlerFunc {
 			handler.NewResponse(ctx).ErrorWithCode(401, err.Error())
 			ctx.Abort()
 		}
-		ctx.Set("user", claims)
+		ctx.Set(constant.CurrentUserKey, claims)
 		ctx.Next()
 	}
 }

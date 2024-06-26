@@ -1,8 +1,11 @@
 package repo
 
 import (
+	"errors"
+
 	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/internal/database"
+	"gorm.io/gorm"
 )
 
 type UserRepo struct {
@@ -15,7 +18,13 @@ func NewUserRepo(db database.Database) UserRepo {
 
 // GetByUsername returns user by username
 func (r UserRepo) GetByUsername(username string) (user *model.User, err error) {
-	if err = r.db.DB.Where("username = ?", username).First(&user).Error; err != nil {
+	err = r.db.DB.Where("username = ?", username).First(&user).Error
+
+	if err == gorm.ErrRecordNotFound {
+		return nil, errors.New("user not found")
+	}
+
+	if err != nil {
 		return nil, err
 	}
 	return user, nil

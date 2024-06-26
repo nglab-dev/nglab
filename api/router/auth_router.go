@@ -22,8 +22,9 @@ func NewAuthRouter(srv server.Server, authHandler handler.AuthHandler) AuthRoute
 func (r AuthRouter) Setup() {
 	api := r.srv.Router
 	{
-		api.POST("/login", r.authHandler.HandleLogin)
-		api.POST("/register", r.authHandler.HandleRegister)
+		api.POST("/login", r.authHandler.Login)
+		api.POST("/register", r.authHandler.Register)
+		api.GET("/user", r.authHandler.GetUser)
 	}
 	slog.Info("Auth router is setup")
 }
