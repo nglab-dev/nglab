@@ -59,7 +59,7 @@ var defaultConfig = Config{
 	},
 	Server: &Server{
 		Port:    8080,
-		Address: "127.0.0.1",
+		Address: "0.0.0.0",
 	},
 	Database: &Database{
 		Dialect: "sqlite",

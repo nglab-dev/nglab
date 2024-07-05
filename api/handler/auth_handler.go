@@ -5,7 +5,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/api/model"
-	"github.com/nglab-dev/nglab/api/schema"
 	"github.com/nglab-dev/nglab/api/service"
 	"github.com/nglab-dev/nglab/internal/constant"
 )
@@ -26,11 +25,11 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 // @Summary Login user
 // @Accept json
 // @Produce json
-// @Param request body schema.LoginRequest true "Login request"
-// @Success 200 {object} ResponseBody{data=schema.LoginResponse}
+// @Param request body model.LoginRequest true "Login request"
+// @Success 200 {object} ResponseBody{data=model.LoginResponse}
 // @Router /login [post]
 func (a *AuthHandler) Login(ctx *gin.Context) {
-	var req schema.LoginRequest
+	var req model.LoginRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
 		NewResponse(ctx).BadRequest()
 		return
@@ -49,7 +48,7 @@ func (a *AuthHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	NewResponse(ctx).OK(schema.LoginResponse{
+	NewResponse(ctx).OK(model.LoginResponse{
 		AccessToken: fmt.Sprintf("Bearer %s", token),
 	})
 }
@@ -58,11 +57,11 @@ func (a *AuthHandler) Login(ctx *gin.Context) {
 // @Summary Register user
 // @Accept json
 // @Produce json
-// @Param request body schema.RegisterRequest true "Register request"
-// @Success 200 {object} ResponseBody{data=schema.RegisterResponse}
+// @Param request body model.RegisterRequest true "Register request"
+// @Success 200 {object} ResponseBody{data=model.RegisterResponse}
 // @Router /register [post]
 func (a *AuthHandler) Register(ctx *gin.Context) {
-	req := &schema.RegisterRequest{}
+	req := &model.RegisterRequest{}
 	if err := ctx.ShouldBindJSON(req); err != nil {
 		NewResponse(ctx).BadRequest()
 		return
@@ -78,7 +77,7 @@ func (a *AuthHandler) Register(ctx *gin.Context) {
 		return
 	}
 
-	NewResponse(ctx).OK(schema.RegisterResponse{
+	NewResponse(ctx).OK(model.RegisterResponse{
 		UserID: user.ID,
 	})
 }
@@ -96,7 +95,7 @@ func (a *AuthHandler) GetUser(ctx *gin.Context) {
 		return
 	}
 
-	user, err := a.userService.Get(claims.(*schema.JWTClaims).UserID)
+	user, err := a.userService.Get(claims.(*model.JWTClaims).UserID)
 
 	if err != nil {
 		NewResponse(ctx).Error(err.Error())

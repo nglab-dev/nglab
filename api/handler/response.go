@@ -44,7 +44,7 @@ func (r *response) Unauthorized() {
 
 func (r *response) Error(msg string) {
 	r.ctx.JSON(200, ResponseBody{
-		Code: 1,
+		Code: 5001,
 		Msg:  msg,
 		Data: nil,
 	})

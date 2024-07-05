@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
-	"github.com/nglab-dev/nglab/api/schema"
+	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/internal/config"
 )
 
@@ -33,7 +33,7 @@ func NewAuthService(cfg config.Config) AuthService {
 
 func (a AuthService) GenerateToken(userID uint) (string, error) {
 	expiresAt := time.Now().Add(a.jwtConfig.expiration)
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, schema.JWTClaims{
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, model.JWTClaims{
 		UserID: userID,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
@@ -50,19 +50,19 @@ func (a AuthService) GenerateToken(userID uint) (string, error) {
 	return token, nil
 }
 
-func (a AuthService) ValidateToken(tokenString string) (*schema.JWTClaims, error) {
+func (a AuthService) ValidateToken(tokenString string) (*model.JWTClaims, error) {
 	re := regexp.MustCompile(`(?i)Bearer `)
 	tokenString = re.ReplaceAllString(tokenString, "")
 	if tokenString == "" {
 		return nil, errors.New("token is empty")
 	}
-	token, err := jwt.ParseWithClaims(tokenString, &schema.JWTClaims{}, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &model.JWTClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(a.jwtConfig.secretKey), nil
 	}, jwt.WithLeeway(5*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	claims, ok := token.Claims.(*schema.JWTClaims)
+	claims, ok := token.Claims.(*model.JWTClaims)
 	if !ok {
 		return nil, errors.New("invalid token")
 	}

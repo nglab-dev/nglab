@@ -20,8 +20,8 @@ type Middlewares []IMiddleware
 // NewMiddlewares creates a new middlewares
 func NewMiddlewares(authMiddleware AuthMiddleware, corsMiddleware CorsMiddleware) Middlewares {
 	return Middlewares{
-		authMiddleware,
 		corsMiddleware,
+		authMiddleware,
 	}
 }
 

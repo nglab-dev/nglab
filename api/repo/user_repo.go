@@ -19,7 +19,6 @@ func NewUserRepo(db database.Database) UserRepo {
 // GetByUsername returns user by username
 func (r UserRepo) GetByUsername(username string) (user *model.User, err error) {
 	err = r.db.DB.Where("username = ?", username).First(&user).Error
-
 	if err == gorm.ErrRecordNotFound {
 		return nil, errors.New("user not found")
 	}
