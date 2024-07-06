@@ -17,6 +17,10 @@ func (r MenuRepo) Create(menu *model.Menu) error {
 	return r.db.DB.Create(menu).Error
 }
 
+func (r MenuRepo) Update(menu *model.Menu) error {
+	return r.db.DB.Save(menu).Error
+}
+
 func (r MenuRepo) List() (menus []model.Menu, err error) {
 	if err = r.db.DB.Find(&menus).Error; err != nil {
 		return nil, err

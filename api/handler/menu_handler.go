@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/api/model"
 	"github.com/nglab-dev/nglab/api/service"
@@ -27,6 +29,29 @@ func (h *MenuHandler) Create(ctx *gin.Context) {
 		return
 	}
 	err := h.menuService.Create(req)
+	if err != nil {
+		NewResponse(ctx).Error(err.Error())
+		return
+	}
+	NewResponse(ctx).OK(req)
+}
+
+// @Tags Menu
+// @Summary
+// @Produce json
+// @Param request body model.MenuUpdateRequest true "Menu update request"
+// @Success 200 {object} ResponseBody{data=model.Menu}
+// @Router /menus/{id} [patch]
+func (h *MenuHandler) Update(ctx *gin.Context) {
+	id := ctx.Param("id")
+	req := &model.Menu{}
+	if err := ctx.ShouldBindJSON(req); err != nil {
+		NewResponse(ctx).BadRequest()
+		return
+	}
+	idInt, _ := strconv.Atoi(id)
+	req.ID = uint(idInt)
+	err := h.menuService.Update(req)
 	if err != nil {
 		NewResponse(ctx).Error(err.Error())
 		return

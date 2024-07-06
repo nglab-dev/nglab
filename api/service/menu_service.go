@@ -17,6 +17,10 @@ func (s MenuService) Create(menu *model.Menu) error {
 	return s.menuRepo.Create(menu)
 }
 
+func (s MenuService) Update(menu *model.Menu) error {
+	return s.menuRepo.Update(menu)
+}
+
 func (s MenuService) List() ([]model.Menu, error) {
 	menus, err := s.menuRepo.List()
 	if err != nil {
