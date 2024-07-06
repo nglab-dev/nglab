@@ -15,6 +15,115 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
+  model.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.LoginResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  model.Menu:
+    properties:
+      created_at:
+        $ref: '#/definitions/model.Datetime'
+      created_by:
+        type: string
+      enabled:
+        type: boolean
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parent_id:
+        type: integer
+      path:
+        type: string
+      sort:
+        type: integer
+      type:
+        description: 0:目录 1:菜单 2:按钮
+        type: integer
+      updated_at:
+        $ref: '#/definitions/model.Datetime'
+      updated_by:
+        type: string
+    type: object
+  model.MenuCreateRequest:
+    properties:
+      enabled:
+        type: boolean
+      icon:
+        type: string
+      name:
+        type: string
+      parent_id:
+        description: 0:顶级菜单
+        type: integer
+      path:
+        type: string
+      sort:
+        type: integer
+      type:
+        description: 0:目录 1:菜单 2:按钮
+        type: integer
+    type: object
+  model.MenuTree:
+    properties:
+      children:
+        items:
+          $ref: '#/definitions/model.MenuTree'
+        type: array
+      created_at:
+        $ref: '#/definitions/model.Datetime'
+      created_by:
+        type: string
+      enabled:
+        type: boolean
+      icon:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      parent_id:
+        type: integer
+      path:
+        type: string
+      sort:
+        type: integer
+      type:
+        description: 0:目录 1:菜单 2:按钮
+        type: integer
+      updated_at:
+        $ref: '#/definitions/model.Datetime'
+      updated_by:
+        type: string
+    type: object
+  model.RegisterRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.RegisterResponse:
+    properties:
+      id:
+        type: integer
+    type: object
   model.User:
     properties:
       avatar_url:
@@ -42,36 +151,6 @@ definitions:
       username:
         type: string
     type: object
-  schema.LoginRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  schema.LoginResponse:
-    properties:
-      access_token:
-        type: string
-    type: object
-  schema.RegisterRequest:
-    properties:
-      password:
-        type: string
-      username:
-        type: string
-    required:
-    - password
-    - username
-    type: object
-  schema.RegisterResponse:
-    properties:
-      id:
-        type: integer
-    type: object
 info:
   contact: {}
 paths:
@@ -85,7 +164,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/schema.LoginRequest'
+          $ref: '#/definitions/model.LoginRequest'
       produces:
       - application/json
       responses:
@@ -96,11 +175,53 @@ paths:
             - $ref: '#/definitions/handler.ResponseBody'
             - properties:
                 data:
-                  $ref: '#/definitions/schema.LoginResponse'
+                  $ref: '#/definitions/model.LoginResponse'
               type: object
       summary: Login user
       tags:
       - Auth
+  /menus:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseBody'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.MenuTree'
+                  type: array
+              type: object
+      tags:
+      - Menu
+    post:
+      parameters:
+      - description: Menu request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.MenuCreateRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/handler.ResponseBody'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.Menu'
+                  type: array
+              type: object
+      tags:
+      - Menu
   /register:
     post:
       consumes:
@@ -111,7 +232,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/schema.RegisterRequest'
+          $ref: '#/definitions/model.RegisterRequest'
       produces:
       - application/json
       responses:
@@ -122,7 +243,7 @@ paths:
             - $ref: '#/definitions/handler.ResponseBody'
             - properties:
                 data:
-                  $ref: '#/definitions/schema.RegisterResponse'
+                  $ref: '#/definitions/model.RegisterResponse'
               type: object
       summary: Register user
       tags:

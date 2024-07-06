@@ -22,6 +22,9 @@ func runMigrateCmd() {
 
 	db := database.New(cfg)
 
-	db.DB.AutoMigrate(&model.User{})
+	db.DB.AutoMigrate(
+		&model.User{},
+		&model.Menu{},
+	)
 	// Add more models here as needed
 }

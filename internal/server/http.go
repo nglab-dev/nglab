@@ -8,6 +8,7 @@ import (
 	"os"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/docs"
 	"github.com/nglab-dev/nglab/internal/config"
@@ -32,6 +33,7 @@ func New(cfg config.Config) Server {
 
 	router.Use(sloggin.New(logger))
 	router.Use(gin.Recovery())
+	router.Use(cors.Default())
 
 	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 
