@@ -10,9 +10,6 @@ else
 	BIN=./bin/nglab
 endif
 
-migrate:
-	@go run . migrate
-
 swag:
 	@go run github.com/swaggo/swag/cmd/swag@latest init --parseDependency
 
@@ -20,12 +17,12 @@ build:swag
 	@go build -o $(BIN) .
 
 run:
-	@go run . run
+	@go run .
 
 watch:
 	@go run github.com/cosmtrek/air@v1.51.0 \
 		--build.cmd "go build -o $(BIN) ." \
-		--build.bin "$(BIN) run" \
+		--build.bin "$(BIN)" \
 		--build.delay "100" \
 		--build.exclude_dir "node_modules,*.db" \
 		--build.include_ext "go" \
