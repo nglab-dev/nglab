@@ -4,35 +4,31 @@ import (
 	"errors"
 
 	"github.com/glebarez/sqlite"
-	"github.com/nglab-dev/nglab/internal/conf"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
 
-var dbInstance *gorm.DB
-
-func Get() *gorm.DB {
-	return dbInstance
+type Config struct {
+	Driver string `json:"driver" yaml:"driver" env:"DB_DRIVER" default:"sqlite"`
+	DSN    string `json:"dsn" yaml:"dsn" env:"DB_DSN" default:"./db.sqlite"`
 }
 
-func Init() (err error) {
-
-	config := conf.Get().DB
+func Init(config Config) (db *gorm.DB, err error) {
 
 	switch config.Driver {
 	case "sqlite":
-		dbInstance, err = gorm.Open(sqlite.Open(config.DSN))
+		db, err = gorm.Open(sqlite.Open(config.DSN))
 	case "mysql":
-		dbInstance, err = gorm.Open(mysql.Open(config.DSN))
+		db, err = gorm.Open(mysql.Open(config.DSN))
 	case "postgres":
-		dbInstance, err = gorm.Open(postgres.Open(config.DSN))
+		db, err = gorm.Open(postgres.Open(config.DSN))
 	default:
 		err = errors.New("unsupported driver: " + config.Driver)
 	}
 
 	if err != nil {
-		return err
+		return nil, err
 	}
-	return nil
+	return db, nil
 }

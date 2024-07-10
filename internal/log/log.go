@@ -8,20 +8,11 @@ import (
 	"go.uber.org/zap/zapcore"
 )
 
-var (
-	logInstance      *zap.Logger
-	sugarLogInstance *zap.SugaredLogger
-)
-
-func Get() *zap.Logger {
-	return logInstance
+type Config struct {
+	Level string `json:"level" yaml:"level" env:"LOG_LEVEL" default:"info"`
 }
 
-func GetSugar() *zap.SugaredLogger {
-	return sugarLogInstance
-}
-
-func Init() (err error) {
+func Init(config Config) (log *zap.Logger, err error) {
 	cores := make([]zapcore.Core, 0)
 
 	// console log
@@ -33,13 +24,10 @@ func Init() (err error) {
 	logger := zap.New(core, caller, callerSkip, zap.Development())
 	zap.ReplaceGlobals(logger)
 	if _, err := zap.RedirectStdLogAt(logger, zapcore.ErrorLevel); err != nil {
-		return err
+		return nil, err
 	}
 
-	logInstance = logger
-	sugarLogInstance = logger.Sugar()
-
-	return nil
+	return logger, nil
 }
 
 func createConsoleCore() zapcore.Core {
