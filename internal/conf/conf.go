@@ -1,23 +1,13 @@
 package conf
 
 import (
-	"errors"
-
-	"github.com/spf13/viper"
+	"github.com/xbmlz/ungo/undb"
+	"github.com/xbmlz/ungo/unhttp"
+	"github.com/xbmlz/ungo/unlog"
 )
 
-func Load(file string) (v *viper.Viper, err error) {
-	v = viper.New()
-	v.SetConfigFile(file)
-	v.AutomaticEnv()
-
-	if err = v.ReadInConfig(); err != nil {
-		return nil, errors.New("config file read failed: " + err.Error())
-	}
-
-	// if err = v.Unmarshal(&cfgInstance); err != nil {
-	// 	return errors.New("config unmarshal failed: " + err.Error())
-	// }
-
-	return v, nil
+type Config struct {
+	Server unhttp.Config `json:"server" yaml:"server"`
+	Log    unlog.Config  `json:"log" yaml:"log"`
+	DB     undb.Config   `json:"db" yaml:"db"`
 }

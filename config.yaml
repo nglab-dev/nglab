@@ -1,9 +1,9 @@
 server:
-  port: 8000
+  port: 8080
 
 db:
   driver: sqlite
-  dsn: db.sqlite
+  name: db.sqlite
 
 log:
   level: debug
