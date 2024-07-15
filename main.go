@@ -1,50 +1,34 @@
 package main
 
 import (
+	"context"
 	"flag"
 
+	"github.com/nglab-dev/nglab/internal/boot"
 	"github.com/nglab-dev/nglab/internal/conf"
-	"github.com/nglab-dev/nglab/internal/model"
-	"github.com/nglab-dev/nglab/internal/query"
-	"github.com/nglab-dev/nglab/internal/router"
-	"github.com/xbmlz/ungo/unconf"
-	"github.com/xbmlz/ungo/undb"
-	"github.com/xbmlz/ungo/unhttp"
-	"github.com/xbmlz/ungo/unlog"
+	"github.com/xbmlz/ungo"
+	"github.com/xbmlz/ungo/cfg"
+	"github.com/xbmlz/ungo/log"
+	"github.com/xbmlz/ungo/server"
 )
 
-// @securityDefinitions.apikey ApiKeyAuth
-// @in header
-// @name Authorization
+var configFile = flag.String("c", "config.yaml", "config file path")
+
 func main() {
-	configFile := flag.String("c", "config.yaml", "config file path")
 	flag.Parse()
 
-	cfg, err := unconf.New(*configFile)
-	if err != nil {
-		panic(err)
-	}
+	var config conf.Config
+	cfg.MustLoad(*configFile, &config)
 
-	config := &conf.Config{}
-	cfg.Parse(config)
+	app := ungo.NewApp(
+		ungo.WithServer(
+			server.NewHTTPServer(boot.NewGinRouter(), &config.Server),
+		),
+	)
 
-	// initialize db
-	db, err := undb.New(config.DB)
-	if err != nil {
-		panic(err)
-	}
+	log.Infof("Starting server on %s", config.Server.Addr())
 
-	db.AutoMigrate(&model.User{})
-
-	query.SetDefault(db)
-
-	srv := unhttp.NewServer(config.Server)
-
-	router.RegisterRoutes(srv.Router)
-
-	unlog.Infof("Starting server on %s:%d", config.Server.Host, config.Server.Port)
-
-	if err := srv.Run(); err != nil {
+	if err := app.Run(context.Background()); err != nil {
 		panic(err)
 	}
 }
