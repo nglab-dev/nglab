@@ -9,8 +9,8 @@ import (
 	"github.com/gofiber/template/html/v2"
 	"github.com/joho/godotenv"
 	"github.com/nglab-dev/nglab/db"
-	"github.com/nglab-dev/nglab/handlers"
 	"github.com/nglab-dev/nglab/models"
+	"github.com/nglab-dev/nglab/router"
 	"github.com/nglab-dev/nglab/utils/env"
 )
 
@@ -36,7 +36,7 @@ func main() {
 
 	app.Use(logger.New())
 
-	handlers.Setup(app)
+	router.Setup(app)
 
 	log.Fatal(app.Listen(addr))
 }

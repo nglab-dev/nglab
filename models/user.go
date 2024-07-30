@@ -20,6 +20,14 @@ func (u *User) IsAdmin() bool {
 	return u.Username == "admin"
 }
 
+func (u *User) ComparePassword(password string) error {
+	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func GetUserByUsername(username string) (User, error) {
 	var user User
 	err := db.Get().Where("username = ?", username).First(&user).Error
@@ -33,12 +41,4 @@ func CreateUser(user *User) error {
 	}
 	user.Password = string(hashedPassword)
 	return db.Get().Create(user).Error
-}
-
-func (u *User) ComparePassword(password string) error {
-	err := bcrypt.CompareHashAndPassword([]byte(u.Password), []byte(password))
-	if err != nil {
-		return err
-	}
-	return nil
 }
