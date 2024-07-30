@@ -19,12 +19,12 @@ build:swag
 run:
 	@go run .
 
-watch:
+dev:
 	@go run github.com/cosmtrek/air@v1.51.0 \
 		--build.cmd "go build -o $(APP_NAME)$(EXT) ." \
 		--build.bin "$(APP_NAME)$(EXT)" \
 		--build.delay "100" \
 		--build.exclude_dir "node_modules,*.db" \
-		--build.include_ext "go" \
+		--build.include_ext "go,html" \
 		--build.stop_on_error "false" \
 		--misc.clean_on_exit true

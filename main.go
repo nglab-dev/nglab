@@ -1,18 +1,42 @@
 package main
 
 import (
-	"flag"
-	"fmt"
+	"log"
+	"net/http"
 
-	"github.com/nglab-dev/nglab/internal/conf"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/logger"
+	"github.com/gofiber/template/html/v2"
+	"github.com/joho/godotenv"
+	"github.com/nglab-dev/nglab/db"
+	"github.com/nglab-dev/nglab/handlers"
+	"github.com/nglab-dev/nglab/models"
+	"github.com/nglab-dev/nglab/utils/env"
 )
 
-var configFile = flag.String("c", "config.yaml", "config file path")
-
 func main() {
-	flag.Parse()
 
-	config := conf.MustLoad(*configFile)
+	if err := godotenv.Load(); err != nil {
+		panic(err)
+	}
 
-	fmt.Printf("version: %v\n", config)
+	if err := db.Init(); err != nil {
+		panic(err)
+	}
+
+	db.Get().AutoMigrate(&models.User{})
+
+	addr := env.GetString("SERVER_ADDR", ":3000")
+
+	engine := html.NewFileSystem(http.Dir("./views"), ".html")
+
+	app := fiber.New(fiber.Config{
+		Views: engine,
+	})
+
+	app.Use(logger.New())
+
+	handlers.Setup(app)
+
+	log.Fatal(app.Listen(addr))
 }
