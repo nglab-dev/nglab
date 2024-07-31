@@ -1,12 +1,12 @@
 <!-- 侧边菜单 -->
 <div class="layui-side layui-side-menu">
   <div class="layui-side-scroll">
-    <div class="layui-logo" lay-href="home/console.html">
-      <span>layuiAdmin</span>
+    <div class="layui-logo" lay-href="home">
+      <span>NGLab</span>
     </div>
 
     <ul class="layui-nav layui-nav-tree" lay-accordion id="LAY-system-side-menu" lay-filter="layadmin-system-side-menu">
-      <li data-name="home" class="layui-nav-item layui-nav-itemed">
+      <!-- <li data-name="home" class="layui-nav-item layui-nav-itemed">
         <a href="javascript:;" lay-tips="主页" lay-direction="2">
           <i class="layui-icon layui-icon-home"></i>
           <cite>主页</cite>
@@ -325,12 +325,23 @@
             </dl>
           </dd>
         </dl>
-      </li>
-      <li data-name="get" class="layui-nav-item">
-        <a href="javascript:;" layadmin-event="about" lay-tips="授权" lay-direction="2">
-          <i class="layui-icon layui-icon-auz"></i>
-          <cite>关于</cite>
+      </li> -->
+      <li data-name="get" class="layui-nav-item layui-this">
+        <a href="javascript:;" layadmin-event="home" lay-tips="授权" lay-direction="2">
+          <i class="layui-icon layui-icon-home"></i>
+          <cite>首页</cite>
         </a>
+      </li>
+      <li data-name="home" class="layui-nav-item">
+        <a href="javascript:;" lay-tips="系统设置" lay-direction="2">
+          <i class="layui-icon layui-icon-set"></i>
+          <cite>系统设置</cite>
+        </a>
+        <dl class="layui-nav-child">
+          <dd data-name="menu">
+            <a lay-href="system/menu.html">菜单设置</a>
+          </dd>
+        </dl>
       </li>
     </ul>
   </div>

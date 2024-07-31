@@ -16,6 +16,9 @@ func Setup(app *fiber.App) {
 
 	handlers.NewAuthHandler().Register(app)
 
-	authRouter := app.Group("", middleware.AuthRequired)
-	handlers.NewHomeHandler().Register(authRouter)
+	rootRouter := app.Group("", middleware.AuthRequired)
+	handlers.NewHomeHandler().Register(rootRouter)
+
+	systemRouter := app.Group("system", middleware.AuthRequired)
+	handlers.NewMenuHandler().Register(systemRouter)
 }

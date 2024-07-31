@@ -33,6 +33,7 @@ func (h authHandler) Register(router fiber.Router) {
 	router.Post("/login", h.login)
 	router.Get("/register", h.register)
 	router.Post("/register", h.register)
+	router.Post("/logout", h.logout)
 }
 
 func (h authHandler) login(c fiber.Ctx) error {
@@ -105,4 +106,9 @@ func (h authHandler) register(c fiber.Ctx) error {
 	return h.Ok(c, fiber.Map{
 		"location": "/login",
 	})
+}
+
+func (h authHandler) logout(c fiber.Ctx) error {
+	auth.ClearSession(c)
+	return h.Ok(c, nil)
 }

@@ -2,13 +2,7 @@
 <html lang="en">
 
 <head>
-  <meta charset="utf-8">
-  <title>{{ .title }}</title>
-  <meta name="renderer" content="webkit">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link href="/static/layui/css/layui.css" rel="stylesheet">
-  <link href="/static/adminui/css/admin.css" rel="stylesheet">
+  {{ template "partials/head" . }}
   <link href="/static/adminui/css/login.css" rel="stylesheet">
 </head>
 
@@ -54,7 +48,7 @@
           <a href="forget" class="layadmin-user-jump-change layadmin-link" style="margin-top: 7px;">忘记密码？</a>
         </div>
         <div class="layui-form-item">
-          <button class="layui-btn layui-btn-fluid" lay-submit="" lay-filter="LAY-user-login-submit">登 入</button>
+          <button class="layui-btn layui-btn-fluid" lay-submit lay-filter="LAY-user-login-submit">登 入</button>
         </div>
         <!-- <div class="layui-trans layui-form-item layadmin-user-login-other">
           <label>社交账号登入</label>
@@ -86,11 +80,8 @@
         , router = layui.router()
         , search = router.search;
 
-      form.render();
-
       //提交
       form.on('submit(LAY-user-login-submit)', function (obj) {
-
         //请求登入接口
         admin.req({
           url: 'login',
@@ -102,8 +93,6 @@
             //   key: setter.request.tokenName
             //   , value: res.data.access_token
             // });
-
-            console.log(res);
 
             //登入成功的提示与跳转
             layer.msg('登录成功', {

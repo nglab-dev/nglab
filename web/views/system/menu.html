@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  {{ template "partials/head" . }}
+  <link href="/static/adminui/css/admin.css" rel="stylesheet">
+</head>
+
+<div class="layui-fluid">
+  <div class="layui-card">
+    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+      <div class="layui-form-item">
+        <div class="layui-inline">
+          <label class="layui-form-label">名称</label>
+          <div class="layui-input-block">
+            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+          </div>
+        </div>
+        <div class="layui-inline">
+          <button class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+          </button>
+        </div>
+      </div>
+    </div>
+    <div class="layui-card-body">
+      <div style="padding-bottom: 10px;">
+        <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
+      </div>
+      xx
+    </div>
+  </div>
+</div>
+
+<div id="add" style="display: none;">
+  <div class="layui-form" lay-filter="layuiadmin-form-admin" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
+    <div class="layui-form-item">
+      <label class="layui-form-label">登录名</label>
+      <div class="layui-input-inline">
+        <input type="text" name="loginname" lay-verify="required" placeholder="请输入用户名" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">手机</label>
+      <div class="layui-input-inline">
+        <input type="text" name="phone" lay-verify="phone" placeholder="请输入号码" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">邮箱</label>
+      <div class="layui-input-inline">
+        <input type="text" name="email" lay-verify="email" placeholder="请输入邮箱" autocomplete="off" class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">角色</label>
+      <div class="layui-input-inline">
+        <input type="text" name="role" lay-verify="required" placeholder="请输入角色类型" autocomplete="off"
+          class="layui-input">
+      </div>
+    </div>
+    <div class="layui-form-item">
+      <label class="layui-form-label">审核状态</label>
+      <div class="layui-input-inline">
+        <input type="checkbox" lay-filter="switch" name="switch" lay-skin="switch" lay-text="通过|待审核" title="通过|待审核">
+        <div class="layui-unselect layui-form-switch" lay-skin="switch">
+          <div>待审核</div><i></i>
+        </div>
+      </div>
+    </div>
+    <div class="layui-form-item layui-hide">
+      <input type="button" lay-submit="" lay-filter="LAY-user-back-submit" id="LAY-user-back-submit" value="确认">
+    </div>
+  </div>
+
+</div>
+
+{{ template "partials/scripts" . }}
+
+<script>
+  layui.config({
+    base: '../../../static/' // 静态资源所在路径
+  }).use(['index', 'table'], function () {
+
+    var $ = layui.$,
+      form = layui.form,
+      table = layui.table;
+
+    //事件-搜索
+    form.on('submit(LAY-user-back-search)', function (data) {
+      var field = data.field;
+
+      //执行重载
+      table.reload('LAY-user-back-manage', {
+        where: field
+      });
+    });
+
+    //事件
+    var active = {
+      add: function () {
+        layer.open({
+          type: 1,
+          title: '添加管理员',
+          content: $('#add'),
+          area: 'auto',
+          btn: ['确定', '取消'],
+          yes: function (index, layero) {
+            var iframeWindow = window['layui-layer-iframe' + index]
+              , submitID = 'LAY-user-back-submit'
+              , submit = layero.find('iframe').contents().find('#' + submitID);
+
+            //事件-提交
+            iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+              var field = data.field; //获取提交的字段
+
+              //提交 Ajax 成功后，静态更新表格中的数据
+              //$.ajax({});
+              table.reload('LAY-user-front-submit'); //数据刷新
+              layer.close(index); //关闭弹层
+            });
+
+            submit.trigger('click');
+          }
+        });
+      }
+    }
+    $('.layui-btn.layuiadmin-btn-admin').on('click', function () {
+      var type = $(this).data('type');
+      active[type] ? active[type].call(this) : '';
+    });
+  });
+</script>

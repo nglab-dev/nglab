@@ -9,7 +9,7 @@ import (
 type User struct {
 	BaseModel
 	Email    string `json:"email"`
-	Password string `json:"password"`
+	Password string `json:"-"`
 	Username string `json:"username"`
 }
 

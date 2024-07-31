@@ -12,6 +12,10 @@ import (
 
 var store *session.Store
 
+const (
+	UserSessionKey = "user"
+)
+
 func Setup() {
 	store = session.New(session.Config{
 		CookieHTTPOnly: true,
@@ -26,7 +30,7 @@ func SetSession(c fiber.Ctx, user *models.User) {
 
 	userJsonStr, _ := json.Marshal(user)
 
-	session.Set("user", string(userJsonStr))
+	session.Set(UserSessionKey, string(userJsonStr))
 	if err := session.Save(); err != nil {
 		log.Errorf("Error saving session: %v", err)
 	}
@@ -39,12 +43,13 @@ func GetSession(c fiber.Ctx) *session.Session {
 
 func ClearSession(c fiber.Ctx) {
 	session := GetSession(c)
-	session.Delete("user")
+	session.Delete(UserSessionKey)
+	session.Save()
 }
 
 func GetUser(c fiber.Ctx) (user *models.User) {
 	session := GetSession(c)
-	userJsonStr := session.Get("user")
+	userJsonStr := session.Get(UserSessionKey)
 	if userJsonStr == nil {
 		return nil
 	}
