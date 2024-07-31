@@ -1,6 +1,7 @@
 package models
 
 import (
+	"github.com/gofiber/fiber/v3/log"
 	"github.com/nglab-dev/nglab/db"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -41,4 +42,23 @@ func CreateUser(user *User) error {
 	}
 	user.Password = string(hashedPassword)
 	return db.Get().Create(user).Error
+}
+
+func InitAdminUser() {
+
+	u, _ := GetUserByUsername("admin")
+	if u.ID != 0 {
+		return
+	}
+
+	user := User{
+		Username: "admin",
+		Password: "admin",
+		Email:    "admin@localhost",
+	}
+	if err := CreateUser(&user); err != nil {
+		log.Warnf("Failed to create admin user: %v", err)
+	}
+
+	log.Info("Admin user created")
 }

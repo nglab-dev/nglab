@@ -11,12 +11,13 @@ import (
 type RegisterRequest struct {
 	Username        string `json:"username" form:"username"`
 	Password        string `json:"password" form:"password"`
-	ConfirmPassword string `json:"confirm_password" form:"confirm_password"`
+	ConfirmPassword string `json:"confirmPassword" form:"confirmPassword"`
 }
 
 type LoginRequest struct {
 	Username string `json:"username" form:"username"`
 	Password string `json:"password" form:"password"`
+	Remember bool   `json:"remember" form:"remember"`
 }
 
 type authHandler struct {
@@ -83,9 +84,13 @@ func (h authHandler) register(c fiber.Ctx) error {
 		return h.Error(c, "Passwords do not match")
 	}
 
-	_, err := models.GetUserByUsername(req.Username)
+	user, err := models.GetUserByUsername(req.Username)
 	if err != nil && err != gorm.ErrRecordNotFound {
 		return h.Error(c, err.Error())
+	}
+
+	if user.ID != 0 {
+		return h.Error(c, "Username already exists")
 	}
 
 	newUser := new(models.User)

@@ -16,11 +16,7 @@ func (h *BaseHandler) Ok(c fiber.Ctx, data interface{}) error {
 
 func (h *BaseHandler) Error(c fiber.Ctx, message string) error {
 	return c.JSON(fiber.Map{
-		"code":    1,
-		"message": message,
+		"code": 1,
+		"msg":  message,
 	})
-}
-
-func (h *BaseHandler) HTML(c fiber.Ctx, name string, data fiber.Map) error {
-	return c.Render(name, data, "layouts/default")
 }

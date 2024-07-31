@@ -25,6 +25,6 @@ dev:
 		--build.bin "$(APP_NAME)$(EXT)" \
 		--build.delay "100" \
 		--build.exclude_dir "node_modules,*.db" \
-		--build.include_ext "go,html" \
+		--build.include_ext "go" \
 		--build.stop_on_error "false" \
 		--misc.clean_on_exit true
