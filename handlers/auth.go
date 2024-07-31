@@ -2,8 +2,10 @@ package handlers
 
 import (
 	"github.com/gofiber/fiber/v3"
+	"github.com/nglab-dev/nglab/auth"
 	"github.com/nglab-dev/nglab/models"
 	"github.com/nglab-dev/nglab/utils/env"
+	"gorm.io/gorm"
 )
 
 type RegisterRequest struct {
@@ -25,105 +27,77 @@ func NewAuthHandler() authHandler {
 	return authHandler{}
 }
 
-func (h authHandler) Register(app *fiber.App) {
-	app.Get("/login", h.login)
-	app.Post("/login", h.login)
+func (h authHandler) Register(router fiber.Router) {
+	router.Get("/login", h.login)
+	router.Post("/login", h.login)
+	router.Get("/register", h.register)
+	router.Post("/register", h.register)
 }
 
 func (h authHandler) login(c fiber.Ctx) error {
 	appName := env.GetString("APP_NAME", "nglab")
-	// get request method
 	if c.Method() == "GET" {
+		user := auth.GetUser(c)
+		if user != nil {
+			return c.Redirect().To("/")
+		}
+
 		return c.Render("login", fiber.Map{
 			"title": appName,
 		})
-	} else {
-		username := c.FormValue("username")
-		password := c.FormValue("password")
+	}
+	username := c.FormValue("username")
+	password := c.FormValue("password")
 
-		user, err := models.GetUserByUsername(username)
-		if err != nil {
-
-		}
+	user, err := models.GetUserByUsername(username)
+	if err != nil {
+		return h.Error(c, "User not found")
 	}
 
+	if err := user.ComparePassword(password); err != nil {
+		return h.Error(c, "Incorrect password")
+	}
+
+	// save session
+	auth.SetSession(c, &user)
+
+	return h.Ok(c, fiber.Map{
+		"location": "/",
+	})
 }
 
-// func HandleLoginView(c fiber.Ctx) error {
-// 	return c.Render("login", fiber.Map{})
-// }
+func (h authHandler) register(c fiber.Ctx) error {
+	appName := env.GetString("APP_NAME", "nglab")
+	if c.Method() == "GET" {
+		return c.Render("register", fiber.Map{
+			"title": appName,
+		})
+	}
 
-// func HandleRegisterView(c fiber.Ctx) error {
-// 	return c.Render("register", fiber.Map{})
-// }
+	req := new(RegisterRequest)
+	if err := c.Bind().Form(req); err != nil {
+		return h.Error(c, "Invalid input")
+	}
 
-// func HandleRegister(c fiber.Ctx) error {
-// 	req := new(RegisterRequest)
+	if req.Password != req.ConfirmPassword {
+		return h.Error(c, "Passwords do not match")
+	}
 
-// 	if err := c.Bind().Form(req); err != nil {
-// 		return c.Render("signup", fiber.Map{
-// 			"error": "Invalid input",
-// 		})
-// 	}
+	_, err := models.GetUserByUsername(req.Username)
+	if err != nil && err != gorm.ErrRecordNotFound {
+		return h.Error(c, err.Error())
+	}
 
-// 	if req.Password != req.ConfirmPassword {
-// 		return c.Render("signup", fiber.Map{
-// 			"error": "Passwords do not match",
-// 		})
-// 	}
+	newUser := new(models.User)
+	newUser.Username = req.Username
+	newUser.Password = req.Password
 
-// 	user, err := models.GetUserByUsername(req.Username)
-// 	if err != nil && err != gorm.ErrRecordNotFound {
-// 		return c.Render("signup", fiber.Map{
-// 			"error": err.Error(),
-// 		})
-// 	}
+	err = models.CreateUser(newUser)
+	if err != nil {
+		return h.Error(c, err.Error())
+	}
 
-// 	if user.ID != 0 {
-// 		log.Infof("user id is %s", user.ID)
-// 		return c.Render("signup", fiber.Map{
-// 			"error": "Username already exists",
-// 		})
-// 	}
-
-// 	newUser := new(models.User)
-// 	newUser.Username = req.Username
-// 	newUser.Password = req.Password
-
-// 	err = models.CreateUser(newUser)
-// 	if err != nil {
-// 		return c.Render("signup", fiber.Map{
-// 			"error": err.Error(),
-// 		})
-// 	}
-
-// 	return c.Redirect().Status(fiber.StatusMovedPermanently).To("/login")
-// }
-
-// func HandleLogin(c fiber.Ctx) error {
-// 	req := new(LoginRequest)
-// 	if err := c.Bind().Form(req); err != nil {
-// 		return c.Render("login", fiber.Map{
-// 			"error": "Invalid input",
-// 		})
-// 	}
-
-// 	user, err := models.GetUserByUsername(req.Username)
-// 	if err != nil {
-// 		if err == gorm.ErrRecordNotFound {
-// 			return c.Render("login", fiber.Map{
-// 				"error": "User not found",
-// 			})
-// 		}
-// 	}
-
-// 	if err := user.ComparePassword(req.Password); err != nil {
-// 		return c.Render("login", fiber.Map{
-// 			"error": "Incorrect password",
-// 		})
-// 	}
-
-// 	SetSession(c, user.Username)
-
-// 	return c.Redirect().Status(fiber.StatusMovedPermanently).To("/")
-// }
+	return h.Ok(c, fiber.Map{
+		"location": "/login",
+	})
+}

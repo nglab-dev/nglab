@@ -24,7 +24,9 @@ func main() {
 		panic(err)
 	}
 
-	db.Get().AutoMigrate(&models.User{})
+	if err := db.Get().AutoMigrate(&models.User{}); err != nil {
+		panic(err)
+	}
 
 	addr := env.GetString("SERVER_ADDR", ":3000")
 
