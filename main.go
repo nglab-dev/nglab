@@ -25,7 +25,7 @@ func main() {
 		panic(err)
 	}
 
-	if err := db.Get().AutoMigrate(&models.User{}); err != nil {
+	if err := db.Get().AutoMigrate(&models.User{}, &models.Menu{}); err != nil {
 		panic(err)
 	}
 

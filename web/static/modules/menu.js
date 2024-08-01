@@ -1,200 +1,198 @@
+layui.define(["table", "form"], function (exports) {
+  var $ = layui.$,
+    form = layui.form,
+    dropdown = layui.dropdown,
+    tree = layui.tree,
+    admin = layui.admin,
+    treeTable = layui.treeTable;
 
-layui.define(['table', 'form'], function (exports) {
-    var $ = layui.$
-        , table = layui.table
-        , form = layui.form;
+  var prefix = "/system";
+  var formTree = [];
+  var icons = [];
 
-    //用户管理
-    table.render({
-        elem: '#LAY-user-manage'
-        , url: layui.setter.paths.base + 'json/useradmin/webuser.js' //模拟接口
-        , cols: [[
-            { type: 'checkbox', fixed: 'left' }
-            , { field: 'id', width: 100, title: 'ID', sort: true }
-            , { field: 'username', title: '用户名', minWidth: 100 }
-            , { field: 'avatar', title: '头像', width: 100, templet: '#imgTpl' }
-            , { field: 'phone', title: '手机' }
-            , { field: 'email', title: '邮箱' }
-            , { field: 'sex', width: 80, title: '性别' }
-            , { field: 'ip', title: 'IP' }
-            , { field: 'jointime', title: '加入时间', sort: true }
-            , { title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-webuser' }
-        ]]
-        , page: true
-        , limit: 30
-        , height: 'full-220'
-        , text: '对不起，加载出现异常！'
+  $.getJSON("/static/icons.json", function (data) {
+    icons = data;
+  });
+
+  // 初始化菜单树
+  function initMenuTree() {
+    admin.req({
+      url: prefix + "/menu/tree",
+      done: function (res) {
+        console.log(res);
+        formTree = [
+          {
+            title: "根目录",
+            is_parent: true,
+            id: 0,
+            children: res.data,
+          },
+        ];
+      },
     });
+  }
 
-    //事件-工具条
-    table.on('tool(LAY-user-manage)', function (obj) {
-        var data = obj.data;
-        if (obj.event === 'del') {
-            layer.prompt({
-                formType: 1
-                , title: '敏感操作，请验证口令'
-            }, function (value, index) {
-                layer.close(index);
+  initMenuTree();
 
-                layer.confirm('真的删除行么', function (index) {
-                    obj.del();
-                    layer.close(index);
-                });
-            });
-        } else if (obj.event === 'edit') {
-            var tr = $(obj.tr);
-
-            layer.open({
-                type: 2
-                , title: '编辑用户'
-                , content: '../../../views/user/user/userform.html'
-                , maxmin: true
-                , area: ['500px', '450px']
-                , btn: ['确定', '取消']
-                , yes: function (index, layero) {
-                    var iframeWindow = window['layui-layer-iframe' + index]
-                        , submitID = 'LAY-user-front-submit'
-                        , submit = layero.find('iframe').contents().find('#' + submitID);
-
-                    //事件-提交
-                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
-                        var field = data.field; //获取提交的字段
-
-                        //提交 Ajax 成功后，静态更新表格中的数据
-                        //$.ajax({});
-                        table.reload('LAY-user-manage'); //数据刷新
-                        layer.close(index); //关闭弹层
-                    });
-
-                    submit.trigger('click');
-                }
-                , success: function (layero, index) {
-
-                }
-            });
+  var treeTableIns = treeTable.render({
+    elem: "#menu-tree-table",
+    url: prefix + "/menu/tree",
+    tree: {
+      customName: {
+        name: "title",
+        pid: "parent_id",
+        isParent: "is_parent",
+      }
+    },
+    cols: [[
+      { field: 'id', title: 'ID', width: 80, sort: true, fixed: 'left' },
+      { field: 'title', title: '菜单名称' },
+      { field: 'path', title: '菜单路径' },
+      { field: 'sort', title: '显示顺序' },
+      {
+        field: 'type', width: 180, title: '菜单类型', templet: function (d) {
+          if (d.type === 0) {
+            return '<span class="layui-badge layui-bg-green">目录</span>';
+          } else if (d.type === 1) {
+            return '<span class="layui-badge layui-bg-blue">菜单</span>';
+          } else {
+            return '<span class="layui-badge layui-bg-gray">按钮</span>';
+          }
         }
-    });
-
-    //管理员管理
-    table.render({
-        elem: '#LAY-user-back-manage'
-        , url: layui.setter.paths.base + 'json/useradmin/mangadmin.js' //模拟接口
-        , cols: [[
-            { type: 'checkbox', fixed: 'left' }
-            , { field: 'id', width: 80, title: 'ID', sort: true }
-            , { field: 'loginname', title: '登录名' }
-            , { field: 'telphone', title: '手机' }
-            , { field: 'email', title: '邮箱' }
-            , { field: 'role', title: '角色' }
-            , { field: 'jointime', title: '加入时间', sort: true }
-            , { field: 'check', title: '审核状态', templet: '#buttonTpl', minWidth: 80, align: 'center' }
-            , { title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-admin' }
-        ]]
-        , text: '对不起，加载出现异常！'
-    });
-
-    //事件-工具条
-    table.on('tool(LAY-user-back-manage)', function (obj) {
-        var data = obj.data;
-        if (obj.event === 'del') {
-            layer.prompt({
-                formType: 1
-                , title: '敏感操作，请验证口令'
-            }, function (value, index) {
-                layer.close(index);
-                layer.confirm('确定删除此管理员？', function (index) {
-                    console.log(obj)
-                    obj.del();
-                    layer.close(index);
-                });
-            });
-        } else if (obj.event === 'edit') {
-            var tr = $(obj.tr);
-
-            layer.open({
-                type: 2
-                , title: '编辑管理员'
-                , content: '../../../views/user/administrators/adminform.html'
-                , area: ['420px', '420px']
-                , btn: ['确定', '取消']
-                , yes: function (index, layero) {
-                    var iframeWindow = window['layui-layer-iframe' + index]
-                        , submitID = 'LAY-user-back-submit'
-                        , submit = layero.find('iframe').contents().find('#' + submitID);
-
-                    //事件-提交
-                    iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
-                        var field = data.field; //获取提交的字段
-
-                        //提交 Ajax 成功后，静态更新表格中的数据
-                        //$.ajax({});
-                        table.reload('LAY-user-back-manage'); //数据刷新
-                        layer.close(index); //关闭弹层
-                    });
-
-                    submit.trigger('click');
-                }
-                , success: function (layero, index) {
-
-                }
-            })
+      },
+      {
+        fixed: "right", title: "操作", width: 280, align: "center", templet: function (d) {
+          return `<a class="layui-btn layui-btn-xs" lay-event="edit"><i class="layui-icon layui-icon-edit"></i>编辑</a>
+            <a class="layui-btn layui-btn-xs" lay-event="add"><i class="layui-icon layui-icon-add-1"></i>添加子菜单</a>
+            <a class="layui-btn layui-btn-xs layui-btn-danger" lay-event="del"><i class="layui-icon layui-icon-delete"></i>删除</a>`;
         }
+      }
+    ]],
+  });
+
+  form.on('radio(type)', function (data) {
+    if (data.value == 1) {
+      $("#menu-path-item").show();
+    }
+  });
+
+  // 父级菜单选择
+  dropdown.render({
+    elem: "#parent_id",
+    content: '<div id="parent-menu-tree"></div>',
+    style: "width: 460px; padding: 20px 10px;",
+    ready: function (elemPanel, elem) {
+      tree.render({
+        elem: "#parent-menu-tree",
+        data: formTree,
+        onlyIconControl: true, // 是否仅允许节点左侧图标控制展开收缩
+        click: function (obj) {
+          // 给 form parent_id 赋值
+          form.val("menu-form", {
+            parent_id: obj.data.title,
+          });
+          $("#parent_id").data("id", obj.data.id);
+          // 关闭 dropdown
+          dropdown.close("parent_id");
+        },
+      });
+    },
+  });
+
+  // 菜单图标选择
+  var menuIconHtml = `<div id="menu-icons" class="layui-form">
+    <input type="text" name="" placeholder="文本框" class="layui-input">
+    <div class="icon-list" style="margin-top: 10px; overflow-y: auto; overflow-x: hidden; height: 220px; padding: 10px;"></div>
+  </div>`;
+
+  // 菜单图标下拉框
+  dropdown.render({
+    elem: "#menu-icon-dropdown",
+    content: menuIconHtml,
+    style: "width: 460px; height: 300px; padding: 20px 10px;",
+    ready: function (elemPanel, elem) {
+      var html = `<ul class="layui-row layui-col-space10">
+          ${icons
+          .map(
+            (icon) => `
+          <li class="layui-col-xs6 layui-col-sm4 layui-col-md2" style="cursor: pointer; margin-top: 10px;" data-icon="${icon.fontclass}">
+            <i class="layui-icon ${icon.fontclass}" style="font-size: 20px;"></i>
+          </li>
+          `
+          )
+          .join("")}
+        </ul>`;
+      $(".icon-list").html(html);
+
+      // 选择图标
+      $(".icon-list li").click(function () {
+        form.val("menu-form", {
+          icon: "layui-icon " + $(this).data("icon"),
+        });
+        dropdown.close("menu-icon-dropdown");
+      });
+
+      // 输入框搜索
+      $("#menu-icons input").on("input", function () {
+        var val = $(this).val();
+        $(".icon-list li").each(function () {
+          if ($(this).data("icon").indexOf(val) > -1) {
+            $(this).show();
+          } else {
+            $(this).hide();
+          }
+        });
+      });
+    },
+  });
+
+  form.on('submit(add-menu-submit)', function (data) {
+    var field = data.field; // 获取表单字段值
+    field.parent_id = $("#parent_id").data("id");
+    field.sort = parseInt(field.sort);
+    field.type = parseInt(field.type);
+    var jsonData = JSON.stringify(field);
+    admin.req({
+      url: prefix + "/menu",
+      method: "POST",
+      contentType: "application/json",
+      data: jsonData,
+      done: function (res) {
+        // 重新获取菜单树
+        initMenuTree();
+        treeTableIns.reload();
+        // 清空表单
+        $("#add-menu-reset").click();
+        // 关闭弹出层
+        layer.close("add");
+        layer.msg("添加成功");
+      },
     });
+    return false;
+  });
 
-    //角色管理
-    table.render({
-        elem: '#LAY-user-back-role'
-        , url: layui.setter.paths.base + 'json/useradmin/role.js' //模拟接口
-        , cols: [[
-            { type: 'checkbox', fixed: 'left' }
-            , { field: 'id', width: 80, title: 'ID', sort: true }
-            , { field: 'rolename', title: '角色名' }
-            , { field: 'limits', title: '拥有权限' }
-            , { field: 'descr', title: '具体描述' }
-            , { title: '操作', width: 150, align: 'center', fixed: 'right', toolbar: '#table-useradmin-admin' }
-        ]]
-        , text: '对不起，加载出现异常！'
-    });
+  // 按钮事件
+  var active = {
+    add: function () {
+      layer.open({
+        id: "add",
+        type: 1,
+        title: "添加菜单",
+        content: $("#add"),
+        area: ["600px", "600px"],
+        btn: ["确定", "取消"],
+        yes: function (index, layero) {
+          var submit = layero.find("#add-menu-submit");
+          submit.trigger("click");
+        },
+      });
+    },
+  };
 
-    //事件-工具条
-    table.on('tool(LAY-user-back-role)', function (obj) {
-        var data = obj.data;
-        if (obj.event === 'del') {
-            layer.confirm('确定删除此角色？', function (index) {
-                obj.del();
-                layer.close(index);
-            });
-        } else if (obj.event === 'edit') {
-            var tr = $(obj.tr);
+  $(".layui-btn.layuiadmin-btn-admin").on("click", function () {
+    var type = $(this).data("type");
+    active[type] ? active[type].call(this) : "";
+  });
 
-            layer.open({
-                type: 2
-                , title: '编辑角色'
-                , content: '../../../views/user/administrators/roleform.html'
-                , area: ['500px', '480px']
-                , btn: ['确定', '取消']
-                , yes: function (index, layero) {
-                    var iframeWindow = window['layui-layer-iframe' + index]
-                        , submit = layero.find('iframe').contents().find("#LAY-user-role-submit");
-
-                    //事件-提交
-                    iframeWindow.layui.form.on('submit(LAY-user-role-submit)', function (data) {
-                        var field = data.field; //获取提交的字段
-
-                        //提交 Ajax 成功后，静态更新表格中的数据
-                        //$.ajax({});
-                        table.reload('LAY-user-back-role'); //数据刷新
-                        layer.close(index); //关闭弹层
-                    });
-
-                    submit.trigger('click');
-                }
-                , success: function (layero, index) {
-
-                }
-            })
-        }
-    });
-
-    exports('useradmin', {})
+  exports("menu", {});
 });

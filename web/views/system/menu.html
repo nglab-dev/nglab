@@ -3,164 +3,99 @@
 
 <head>
   {{ template "partials/head" . }}
-  <link href="/static/adminui/css/admin.css" rel="stylesheet">
+  <link href="/static/adminui/css/admin.css" rel="stylesheet" />
 </head>
 
-<div class="layui-fluid">
-  <div class="layui-card">
-    <div class="layui-form layui-card-header layuiadmin-card-header-auto">
-      <div class="layui-form-item">
-        <div class="layui-inline">
-          <label class="layui-form-label">名称</label>
-          <div class="layui-input-block">
-            <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input">
+<body>
+  <div class="layui-fluid">
+    <div class="layui-card">
+      <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+        <div class="layui-form-item">
+          <div class="layui-inline">
+            <label class="layui-form-label">名称</label>
+            <div class="layui-input-block">
+              <input type="text" name="name" placeholder="请输入" autocomplete="off" class="layui-input" />
+            </div>
+          </div>
+          <div class="layui-inline">
+            <button class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
+              <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+            </button>
           </div>
         </div>
-        <div class="layui-inline">
-          <button class="layui-btn layuiadmin-btn-admin" lay-submit="" lay-filter="LAY-user-back-search">
-            <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+      </div>
+      <div class="layui-card-body">
+        <div style="padding-bottom: 10px">
+          <button class="layui-btn layuiadmin-btn-admin" data-type="add">
+            添加
           </button>
         </div>
+        <table class="layui-hide" id="menu-tree-table"></table>
       </div>
-    </div>
-    <div class="layui-card-body">
-      <div style="padding-bottom: 10px;">
-        <button class="layui-btn layuiadmin-btn-admin" data-type="add">添加</button>
-      </div>
-      xx
     </div>
   </div>
-</div>
 
-<div id="add" style="display: none;">
-  <div class="layui-form" lay-filter="menu-form" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0;">
-    <div class="layui-form-item">
-      <label class="layui-form-label">菜单类型</label>
-      <div class="layui-input-block">
-        <input type="radio" name="type" title="目录" checked>
-        <input type="radio" name="type" title="菜单">
-        <input type="radio" name="type" title="权限">
-      </div>
-    </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">菜单名称</label>
-      <div class="layui-input-block">
-        <input type="text" name="name" lay-verify="name" placeholder="请输入名称" autocomplete="off" class="layui-input">
-      </div>
-    </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">上级菜单</label>
-      <div class="layui-input-block">
-        <input type="text" name="parent_id" lay-verify="parent_id" placeholder="请选择上级菜单" autocomplete="off"
-          class="layui-input" id="dropdown-menu" readonly>
-      </div>
-    </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">角色</label>
-      <div class="layui-input-block">
-        <input type="text" name="role" lay-verify="required" placeholder="请输入角色类型" autocomplete="off"
-          class="layui-input">
-      </div>
-    </div>
-    <div class="layui-form-item">
-      <label class="layui-form-label">审核状态</label>
-      <div class="layui-input-block">
-        <input type="checkbox" lay-filter="switch" name="switch" lay-skin="switch" lay-text="通过|待审核" title="通过|待审核">
-        <div class="layui-unselect layui-form-switch" lay-skin="switch">
-          <div>待审核</div><i></i>
+  <!-- 添加弹窗 -->
+  <div id="add" style="display: none">
+    <form class="layui-form" lay-filter="menu-form" id="layuiadmin-form-admin" style="padding: 20px 30px 0 0">
+      <div class="layui-form-item">
+        <label class="layui-form-label">菜单类型</label>
+        <div class="layui-input-block">
+          <input type="radio" name="type" lay-filter="type" value="0" title="目录" checked />
+          <input type="radio" name="type" lay-filter="type" value="1" title="菜单" />
+          <input type="radio" name="type" lay-filter="type" value="2" title="按钮" />
         </div>
       </div>
-    </div>
-    <div class="layui-form-item layui-hide">
-      <input type="button" lay-submit="" lay-filter="LAY-user-back-submit" id="LAY-user-back-submit" value="确认">
-    </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">上级菜单</label>
+        <div class="layui-input-block">
+          <input type="text" name="parent_id" lay-verify="required" placeholder="请选择上级菜单" autocomplete="off"
+            class="layui-input" id="parent_id" readonly />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">菜单标题</label>
+        <div class="layui-input-block">
+          <input type="text" name="title" lay-verify="required" placeholder="请输入菜单标题" autocomplete="off"
+            class="layui-input" />
+        </div>
+      </div>
+      <div class="layui-form-item" style="display: none;" id="menu-path-item">
+        <label class="layui-form-label">菜单路径</label>
+        <div class="layui-input-block">
+          <input type="text" name="path" placeholder="请输入菜单路径" autocomplete="off" class="layui-input" />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">菜单图标</label>
+        <div class="layui-input-block">
+          <input type="text" name="icon" lay-verify="required" placeholder="请选择菜单图标" autocomplete="off"
+            class="layui-input" id="menu-icon-dropdown" readonly />
+        </div>
+      </div>
+      <div class="layui-form-item">
+        <label class="layui-form-label">显示顺序</label>
+        <div class="layui-input-block">
+          <input type="number" name="sort" lay-verify="required" placeholder="显示顺序" autocomplete="off" value="99"
+            class="layui-input" />
+        </div>
+      </div>
+      <div class="layui-form-item layui-hide">
+        <input type="button" lay-submit lay-filter="add-menu-submit" id="add-menu-submit" value="确认" />
+        <button type="reset" class="layui-btn layui-btn-primary" id="add-menu-reset">重置</button>
+      </div>
+    </form>
   </div>
-
-</div>
+</body>
 
 {{ template "partials/scripts" . }}
 
 <script>
   layui.config({
-    base: '../../../static/' // 静态资源所在路径
-  }).use(['index', 'table'], function () {
+    base: "../../../static/",
+  }).use(["index", "menu"], function () {
 
-    var $ = layui.$,
-      form = layui.form,
-      dropdown = layui.dropdown,
-      tree = layui.tree,
-      table = layui.table;
-
-    form.set({
-      autocomplete: 'off' // 阻止 input 框默认的自动输入完成功能
-    });
-
-    var data = [
-      {
-        id: 0,
-        title: '根目录',
-        spread: true,
-        children: [
-          {
-            id: 1,
-            title: '菜单1',
-            children: [
-              {
-                id: 2,
-                title: '权限1'
-              },
-              {
-                id: 3,
-                title: '权限2'
-              }
-            ]
-          },
-        ]
-      }
-    ];
-
-    dropdown.render({
-      elem: '#dropdown-menu',
-      content: '<div id="menu-tree"></div>',
-      style: 'width: 240px; padding: 20px 10px;',
-      ready: function (elemPanel, elem) {
-        tree.render({
-          elem: '#menu-tree',
-          data: data,
-          onlyIconControl: true,  // 是否仅允许节点左侧图标控制展开收缩
-          click: function (obj) {
-            // layer.msg(JSON.stringify(obj.data));
-            // 给 form parent_id 赋值
-            form.val('menu-form', {
-              "parent_id": obj.data.id
-            });
-            // 关闭 dropdown
-            dropdown.close('dropdown-menu');
-          }
-        });
-      }
-    });
-
-
-    //事件
-    var active = {
-      add: function () {
-        layer.open({
-          type: 1,
-          title: '添加菜单',
-          content: $('#add'),
-          area: 'auto',
-          btn: ['确定', '取消'],
-          yes: function (index, layero) {
-            //
-          }
-        });
-      }
-    }
-
-    $('.layui-btn.layuiadmin-btn-admin').on('click', function () {
-      var type = $(this).data('type');
-      active[type] ? active[type].call(this) : '';
-    });
   });
 </script>
+
+</html>
