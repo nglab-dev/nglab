@@ -29,7 +29,8 @@ func NewAuthService(secretKey string, tokenExpiry int) AuthService {
 func (s *authServiceImpl) Login(user *model.User) (string, error) {
 	expiresAt := time.Now().Add(time.Duration(s.tokenExpiry) * time.Minute)
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, model.UserClaims{
-		UserID: user.ID,
+		UserID:   user.ID,
+		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			ExpiresAt: jwt.NewNumericDate(expiresAt),
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

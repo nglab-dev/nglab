@@ -14,6 +14,29 @@ definitions:
       access_token:
         type: string
     type: object
+  model.User:
+    properties:
+      avatar_url:
+        type: string
+      createdAt:
+        type: string
+      email:
+        type: string
+      gender:
+        type: integer
+      id:
+        type: integer
+      nickname:
+        type: string
+      phone:
+        type: string
+      status:
+        type: integer
+      updatedAt:
+        type: string
+      username:
+        type: string
+    type: object
   response.Response:
     properties:
       code:
@@ -39,8 +62,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "0":
+          description: ""
           schema:
             allOf:
             - $ref: '#/definitions/response.Response'
@@ -49,6 +72,27 @@ paths:
                   $ref: '#/definitions/model.LoginResponse'
               type: object
       summary: Login user
+      tags:
+      - Auth
+  /user:
+    get:
+      consumes:
+      - application/json
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get auth user
       tags:
       - Auth
 securityDefinitions:

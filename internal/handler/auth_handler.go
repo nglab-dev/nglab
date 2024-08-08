@@ -8,6 +8,7 @@ import (
 	"github.com/nglab-dev/nglab/internal/handler/response"
 	"github.com/nglab-dev/nglab/internal/model"
 	"github.com/nglab-dev/nglab/internal/service"
+	"github.com/nglab-dev/nglab/pkg/log"
 )
 
 type AuthHandler struct {
@@ -27,7 +28,7 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 // @Accept json
 // @Produce json
 // @Param request body model.LoginRequest true "Login request"
-// @Success 200 {object} response.Response{data=model.LoginResponse}
+// @Success 0 {object} response.Response{data=model.LoginResponse}
 // @Router /login [post]
 func (h *AuthHandler) Login(ctx *gin.Context) {
 	var req = new(model.LoginRequest)
@@ -58,7 +59,27 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 	})
 }
 
+// @Tags Auth
+// @Summary Get auth user
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{data=model.User}
+// @Router /user [get]
 func (h *AuthHandler) GetLoginUser(ctx *gin.Context) {
-	user := request.GetLoginUser(ctx)
+	claims := request.GetUserClaims(ctx)
+	if claims.UserID == 0 {
+		response.Unauthorized(ctx, errors.New("invalid token"))
+	}
+	user, err := h.userService.FindByID(claims.UserID)
+	if err != nil {
+		response.ServerError(ctx, err)
+	}
+	if user == nil {
+		response.Unauthorized(ctx, errors.New("invalid token"))
+	}
+
+	log.Logger.Sugar().Infof("GetLoginUser: %v", user)
+
 	response.Ok(ctx, user)
 }

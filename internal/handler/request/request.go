@@ -6,14 +6,14 @@ import (
 	"github.com/nglab-dev/nglab/internal/model"
 )
 
-func GetLoginUser(c *gin.Context) (user *model.User) {
-	claims, exists := c.Get(constant.ClaimsKey)
+func GetUserClaims(c *gin.Context) (claims *model.UserClaims) {
+	claimsValue, exists := c.Get(constant.ClaimsKey)
 	if !exists {
 		return nil
 	}
-	user, exists = claims.(*model.User)
+	claims, exists = claimsValue.(*model.UserClaims)
 	if !exists {
 		return nil
 	}
-	return user
+	return claims
 }

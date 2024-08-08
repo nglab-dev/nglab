@@ -9,7 +9,7 @@ import (
 // @securityDefinitions.apikey ApiKeyAuth
 // @in header
 // @name Authorization
-// @basePath /api
+// @BasePath /api
 func main() {
 	if err := godotenv.Load(); err != nil {
 		panic(err)

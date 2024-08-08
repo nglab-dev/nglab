@@ -10,7 +10,6 @@ import (
 )
 
 func AuthMiddleware(authService service.AuthService) gin.HandlerFunc {
-
 	return func(c *gin.Context) {
 		tokenString := ExtractToken(c)
 		claims, err := authService.ValidateToken(tokenString)
