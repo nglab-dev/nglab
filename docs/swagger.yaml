@@ -1,0 +1,59 @@
+definitions:
+  model.LoginRequest:
+    properties:
+      password:
+        type: string
+      username:
+        type: string
+    required:
+    - password
+    - username
+    type: object
+  model.LoginResponse:
+    properties:
+      access_token:
+        type: string
+    type: object
+  response.Response:
+    properties:
+      code:
+        type: integer
+      data: {}
+      msg:
+        type: string
+    type: object
+info:
+  contact: {}
+paths:
+  /login:
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: Login request
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/model.LoginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.LoginResponse'
+              type: object
+      summary: Login user
+      tags:
+      - Auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
