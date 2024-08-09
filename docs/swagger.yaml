@@ -14,11 +14,30 @@ definitions:
       access_token:
         type: string
     type: object
+  dto.LoginUser:
+    properties:
+      email:
+        type: string
+      nickname:
+        type: string
+      username:
+        type: string
+    type: object
+  dto.PaginationResult:
+    properties:
+      data: {}
+      page:
+        type: integer
+      page_size:
+        type: integer
+      total:
+        type: integer
+    type: object
   model.User:
     properties:
       avatar_url:
         type: string
-      createdAt:
+      created_at:
         type: string
       email:
         type: string
@@ -32,7 +51,7 @@ definitions:
         type: string
       phone:
         type: string
-      updatedAt:
+      updated_at:
         type: string
       username:
         type: string
@@ -102,8 +121,8 @@ paths:
       produces:
       - application/json
       responses:
-        "200":
-          description: OK
+        "0":
+          description: ""
           schema:
             allOf:
             - $ref: '#/definitions/response.Response'
@@ -113,9 +132,36 @@ paths:
               type: object
       security:
       - ApiKeyAuth: []
-      summary: Get auth user
+      summary: Get login user
       tags:
-      - Auth
+      - Users
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/dto.LoginUser'
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update login user
+      tags:
+      - Users
   /users:
     get:
       consumes:
@@ -140,13 +186,104 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  items:
-                    $ref: '#/definitions/model.User'
-                  type: array
+                  allOf:
+                  - $ref: '#/definitions/dto.PaginationResult'
+                  - properties:
+                      Data:
+                        items:
+                          $ref: '#/definitions/model.User'
+                        type: array
+                    type: object
               type: object
       security:
       - ApiKeyAuth: []
       summary: List users
+      tags:
+      - Users
+    post:
+      consumes:
+      - application/json
+      parameters:
+      - description: User
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Create user
+      tags:
+      - Users
+  /users/{id}:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Get user by id
+      tags:
+      - Users
+    patch:
+      consumes:
+      - application/json
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: User
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/model.User'
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  $ref: '#/definitions/model.User'
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: Update user
       tags:
       - Users
 securityDefinitions:

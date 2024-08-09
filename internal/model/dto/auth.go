@@ -1,8 +1,6 @@
 package dto
 
 import (
-	"encoding/json"
-
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -22,18 +20,12 @@ type LoginResponse struct {
 }
 
 type LoginUser struct {
-	ID          uint   `json:"id"`
-	Username    string `json:"username"`
-	Token       string `json:"token"`
-	IP          string `json:"ip"`
-	UserAgent   string `json:"user_agent"`
-	TokenExpiry int64  `json:"token_expiry"`
+	Username string `json:"username"`
+	Nickname string `json:"nickname"`
+	Email    string `json:"email"`
 }
 
-func (u *LoginUser) MarshalBinary() ([]byte, error) {
-	return json.Marshal(u)
-}
-
-func (u *LoginUser) UnmarshalBinary(data []byte) error {
-	return json.Unmarshal(data, u)
+type UpdateLoginUserRequest struct {
+	Nickname string `json:"nickname" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
 }

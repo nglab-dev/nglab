@@ -1,14 +1,11 @@
 package handler
 
 import (
-	"errors"
-
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/handler/request"
 	"github.com/nglab-dev/nglab/internal/handler/response"
 	"github.com/nglab-dev/nglab/internal/model/dto"
 	"github.com/nglab-dev/nglab/internal/service"
-	"github.com/nglab-dev/nglab/pkg/log"
 )
 
 type AuthHandler struct {
@@ -18,8 +15,8 @@ type AuthHandler struct {
 
 func NewAuthHandler(authService service.AuthService, userService service.UserService) *AuthHandler {
 	return &AuthHandler{
-		authService: authService,
-		userService: userService,
+		authService,
+		userService,
 	}
 }
 
@@ -53,31 +50,6 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 	response.Ok(ctx, dto.LoginResponse{
 		AccessToken: token,
 	})
-}
-
-// @Tags Auth
-// @Summary Get auth user
-// @Security ApiKeyAuth
-// @Accept json
-// @Produce json
-// @Success 200 {object} response.Response{data=model.User}
-// @Router /user [get]
-func (h *AuthHandler) GetLoginUser(ctx *gin.Context) {
-	claims := request.GetUserClaims(ctx)
-	if claims.UserID == 0 {
-		response.Unauthorized(ctx, errors.New("invalid token"))
-	}
-	user, err := h.userService.FindByID(claims.UserID)
-	if err != nil {
-		response.ServerError(ctx, err)
-	}
-	if user == nil {
-		response.Unauthorized(ctx, errors.New("invalid token"))
-	}
-
-	log.Logger.Sugar().Infof("GetLoginUser: %v", user)
-
-	response.Ok(ctx, user)
 }
 
 // @Tags Auth

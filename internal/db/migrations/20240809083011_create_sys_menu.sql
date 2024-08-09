@@ -11,8 +11,8 @@ CREATE TABLE `sys_menu` (
     `enabled` INTEGER DEFAULT 1, -- 状态 0:禁用 1:启用
     `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, -- 创建时间
     `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP, -- 更新时间
-    `created_by` INTEGER DEFAULT 0, -- 创建人
-    `updated_by` INTEGER DEFAULT 0 -- 更新人
+    `created_by` INTEGER NOT NULL DEFAULT 0, -- 创建人
+    `updated_by` INTEGER NOT NULL DEFAULT 0 -- 更新人
 );
 
 INSERT INTO `sys_menu` (`id`, `parent_id`, `name`, `path`, `type`, `icon`, `sort`, `enabled`) VALUES (1, 0, '系统管理', '', 0, 'fa fa-cog', 1, 1);

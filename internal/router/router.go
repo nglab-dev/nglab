@@ -67,10 +67,14 @@ func InitRouter() *gin.Engine {
 		// auth
 		auth := api.Group("").Use(middleware.AuthMiddleware(authService))
 		auth.POST("/logout", authHandler.Logout)
-		auth.GET("/user", authHandler.GetLoginUser)
 
+		auth.GET("/user", userHandler.GetLoginUser)
+		auth.PATCH("/user", userHandler.UpdateLoginUser)
 		// users
 		auth.GET("/users", userHandler.ListUsers)
+		auth.POST("/users", userHandler.CreateUser)
+		auth.GET("/users/:id", userHandler.GetUser)
+		auth.PATCH("/users/:id", userHandler.UpdateUser)
 	}
 
 	return r

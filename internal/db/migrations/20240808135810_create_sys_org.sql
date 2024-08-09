@@ -5,7 +5,7 @@ CREATE TABLE `sys_org` (
     `parent_id` INTEGER NOT NULL DEFAULT 0, -- 父级ID
     `code` TEXT NOT NULL, -- 机构编码
     `name` TEXT NOT NULL, -- 机构名称
-    `description` TEXT, -- 机构描述
+    `remark` TEXT, -- 机构描述
     `sort` INTEGER NOT NULL DEFAULT 0, -- 排序
     `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 创建时间
     `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 更新时间
@@ -13,7 +13,7 @@ CREATE TABLE `sys_org` (
     `updated_by` INTEGER DEFAULT 0 -- 更新人ID
 );
 
-INSERT INTO `sys_org` (`code`, `name`, `description`) VALUES ('root', 'Root', 'Root organization');
+INSERT INTO `sys_org` (`code`, `name`, `remark`) VALUES ('test', '测试机构', '测试机构');
 
 -- +goose StatementEnd
 -- +goose Down
