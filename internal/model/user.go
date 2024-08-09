@@ -8,7 +8,7 @@ type User struct {
 	Phone     string `json:"phone"`
 	Password  string `json:"-"`
 	Email     string `json:"email"`
-	AvatarUrl string `json:"avatar_url"`
+	AvatarURL string `json:"avatar_url"`
 	Enabled   int    `json:"enabled"`
 }
 

@@ -9,7 +9,7 @@ import (
 
 var Logger *zap.Logger
 
-func InitLogger(level string) {
+func InitLogger(level, encoder string) {
 
 	encoderConfig := zap.NewDevelopmentEncoderConfig()
 	encoderConfig.EncodeTime = timeEncoder
@@ -18,7 +18,7 @@ func InitLogger(level string) {
 	cfg := zap.Config{
 		Level:            zap.NewAtomicLevelAt(ParseLevel(level)),
 		Development:      true,
-		Encoding:         "console",
+		Encoding:         encoder,
 		EncoderConfig:    encoderConfig,
 		OutputPaths:      []string{"stderr"},
 		ErrorOutputPaths: []string{"stderr"},

@@ -18,8 +18,6 @@ func AuthMiddleware(authService service.AuthService) gin.HandlerFunc {
 			response.Unauthorized(c, err)
 			c.Abort()
 		}
-		// check token is login
-
 		c.Set(constant.CtxKeyClaims, claims)
 		c.Next()
 	}

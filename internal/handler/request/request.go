@@ -5,15 +5,15 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/constant"
-	"github.com/nglab-dev/nglab/internal/model"
+	"github.com/nglab-dev/nglab/internal/model/dto"
 )
 
-func GetUserClaims(c *gin.Context) (claims *model.UserClaims) {
+func GetUserClaims(c *gin.Context) (claims *dto.UserClaims) {
 	claimsValue, exists := c.Get(constant.CtxKeyClaims)
 	if !exists {
 		return nil
 	}
-	claims, exists = claimsValue.(*model.UserClaims)
+	claims, exists = claimsValue.(*dto.UserClaims)
 	if !exists {
 		return nil
 	}

@@ -34,7 +34,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/model.LoginRequest"
+                            "$ref": "#/definitions/dto.LoginRequest"
                         }
                     }
                 ],
@@ -50,7 +50,7 @@ const docTemplate = `{
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/model.LoginResponse"
+                                            "$ref": "#/definitions/dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -137,10 +137,69 @@ const docTemplate = `{
                     }
                 }
             }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/model.User"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
         }
     },
     "definitions": {
-        "model.LoginRequest": {
+        "dto.LoginRequest": {
             "type": "object",
             "required": [
                 "password",
@@ -155,7 +214,7 @@ const docTemplate = `{
                 }
             }
         },
-        "model.LoginResponse": {
+        "dto.LoginResponse": {
             "type": "object",
             "properties": {
                 "access_token": {
@@ -175,6 +234,9 @@ const docTemplate = `{
                 "email": {
                     "type": "string"
                 },
+                "enabled": {
+                    "type": "integer"
+                },
                 "gender": {
                     "type": "integer"
                 },
@@ -186,9 +248,6 @@ const docTemplate = `{
                 },
                 "phone": {
                     "type": "string"
-                },
-                "status": {
-                    "type": "integer"
                 },
                 "updatedAt": {
                     "type": "string"

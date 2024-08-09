@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/internal/handler/request"
 	"github.com/nglab-dev/nglab/internal/handler/response"
-	"github.com/nglab-dev/nglab/internal/model"
+	"github.com/nglab-dev/nglab/internal/model/dto"
 	"github.com/nglab-dev/nglab/internal/service"
 	"github.com/nglab-dev/nglab/pkg/log"
 )
@@ -27,11 +27,11 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 // @Summary Login user
 // @Accept json
 // @Produce json
-// @Param request body model.LoginRequest true "Login request"
-// @Success 0 {object} response.Response{data=model.LoginResponse}
+// @Param request body dto.LoginRequest true "Login request"
+// @Success 0 {object} response.Response{data=dto.LoginResponse}
 // @Router /login [post]
 func (h *AuthHandler) Login(ctx *gin.Context) {
-	var req = new(model.LoginRequest)
+	var req = new(dto.LoginRequest)
 
 	if err := ctx.ShouldBindJSON(req); err != nil {
 		response.BadRequest(ctx, err)
@@ -50,7 +50,7 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	response.Ok(ctx, model.LoginResponse{
+	response.Ok(ctx, dto.LoginResponse{
 		AccessToken: token,
 	})
 }

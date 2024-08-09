@@ -2,14 +2,17 @@ package db
 
 import (
 	"errors"
+	"log"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/nglab-dev/nglab/pkg/env"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func Connect() (db *gorm.DB, err error) {
@@ -23,16 +26,31 @@ func Connect() (db *gorm.DB, err error) {
 		}
 	}
 
+	var dialector gorm.Dialector
+
 	switch driver {
 	case "sqlite":
-		db, err = gorm.Open(sqlite.Open(dsn))
+		dialector = sqlite.Open(dsn)
 	case "mysql":
-		db, err = gorm.Open(mysql.Open(dsn))
+		dialector = mysql.Open(dsn)
 	case "postgres":
-		db, err = gorm.Open(postgres.Open(dsn))
+		dialector = postgres.Open(dsn)
 	default:
-		err = errors.New("unsupported driver")
+		return nil, errors.New("unsupported driver")
 	}
+
+	db, err = gorm.Open(dialector, &gorm.Config{
+		Logger: logger.New(
+			log.New(os.Stdout, "\r\n", log.LstdFlags), // io writer
+			logger.Config{
+				SlowThreshold:             time.Second, // Slow SQL threshold
+				LogLevel:                  logger.Info, // Log level
+				IgnoreRecordNotFoundError: true,        // Ignore ErrRecordNotFound error for logger
+				ParameterizedQueries:      false,       // Don't include params in the SQL log
+				Colorful:                  false,       // Disable color
+			},
+		),
+	})
 
 	if err != nil {
 		return nil, err

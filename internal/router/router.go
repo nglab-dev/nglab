@@ -1,7 +1,10 @@
 package router
 
 import (
+	"time"
+
 	"github.com/gin-contrib/cors"
+	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/docs"
 	"github.com/nglab-dev/nglab/internal/cache"
@@ -20,15 +23,16 @@ func InitRouter() *gin.Engine {
 	jwtSecret := env.GetString("JWT_SECRET", "secret")
 	jwtExpire, _ := env.GetInt("JWT_EXPIRE", 3600)
 	logLevel := env.GetString("LOG_LEVEL", "debug")
+	logEncoding := env.GetString("LOG_ENCODING", "console")
 
 	// init logger
-	log.InitLogger(logLevel)
+	log.InitLogger(logLevel, logEncoding)
 
 	// create router
 	r := gin.New()
 
-	r.Use(gin.Logger())
-	r.Use(gin.Recovery())
+	r.Use(ginzap.Ginzap(log.Logger, time.RFC3339, true))
+	r.Use(ginzap.RecoveryWithZap(log.Logger, true))
 	r.Use(cors.Default())
 
 	// connect db
@@ -49,6 +53,7 @@ func InitRouter() *gin.Engine {
 
 	// handler
 	authHandler := handler.NewAuthHandler(authService, userService)
+	userHandler := handler.NewUserHandler(userService)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	docs.SwaggerInfo.BasePath = "/api"
@@ -63,6 +68,9 @@ func InitRouter() *gin.Engine {
 		auth := api.Group("").Use(middleware.AuthMiddleware(authService))
 		auth.POST("/logout", authHandler.Logout)
 		auth.GET("/user", authHandler.GetLoginUser)
+
+		// users
+		auth.GET("/users", userHandler.ListUsers)
 	}
 
 	return r

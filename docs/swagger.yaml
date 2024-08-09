@@ -1,5 +1,5 @@
 definitions:
-  model.LoginRequest:
+  dto.LoginRequest:
     properties:
       password:
         type: string
@@ -9,7 +9,7 @@ definitions:
     - password
     - username
     type: object
-  model.LoginResponse:
+  dto.LoginResponse:
     properties:
       access_token:
         type: string
@@ -22,6 +22,8 @@ definitions:
         type: string
       email:
         type: string
+      enabled:
+        type: integer
       gender:
         type: integer
       id:
@@ -30,8 +32,6 @@ definitions:
         type: string
       phone:
         type: string
-      status:
-        type: integer
       updatedAt:
         type: string
       username:
@@ -58,7 +58,7 @@ paths:
         name: request
         required: true
         schema:
-          $ref: '#/definitions/model.LoginRequest'
+          $ref: '#/definitions/dto.LoginRequest'
       produces:
       - application/json
       responses:
@@ -69,7 +69,7 @@ paths:
             - $ref: '#/definitions/response.Response'
             - properties:
                 data:
-                  $ref: '#/definitions/model.LoginResponse'
+                  $ref: '#/definitions/dto.LoginResponse'
               type: object
       summary: Login user
       tags:
@@ -116,6 +116,39 @@ paths:
       summary: Get auth user
       tags:
       - Auth
+  /users:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - in: query
+        name: keyword
+        type: string
+      - in: query
+        name: page
+        type: integer
+      - in: query
+        name: page_size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.User'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: List users
+      tags:
+      - Users
 securityDefinitions:
   ApiKeyAuth:
     in: header

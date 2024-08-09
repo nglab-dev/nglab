@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -11,6 +10,7 @@ import (
 	"time"
 
 	"github.com/nglab-dev/nglab/pkg/env"
+	"github.com/nglab-dev/nglab/pkg/log"
 )
 
 type HTTPServer struct {
@@ -35,8 +35,9 @@ func NewHTTPServer(handler http.Handler) *HTTPServer {
 
 func (s *HTTPServer) Run() (err error) {
 	go func() {
+		log.Logger.Sugar().Infof("HTTP server is running on %s", s.srv.Addr)
 		if err := s.srv.ListenAndServe(); err != nil {
-			log.Fatalf("Failed to start HTTP server: %+v", err)
+			log.Logger.Sugar().Errorf("HTTP server error: %v", err)
 		}
 	}()
 	quit := make(chan os.Signal, 1)

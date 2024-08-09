@@ -10,14 +10,15 @@ import (
 	"github.com/nglab-dev/nglab/internal/cache"
 	"github.com/nglab-dev/nglab/internal/constant"
 	"github.com/nglab-dev/nglab/internal/model"
+	"github.com/nglab-dev/nglab/internal/model/dto"
 	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService interface {
 	Login(username, password string) (*model.User, error)
-	Logout(user *model.UserClaims) error
+	Logout(user *dto.UserClaims) error
 	GenerateToken(user *model.User) (string, error)
-	ValidateToken(token string) (*model.UserClaims, error)
+	ValidateToken(token string) (*dto.UserClaims, error)
 }
 
 type authServiceImpl struct {
@@ -59,7 +60,7 @@ func (s *authServiceImpl) Login(username, password string) (*model.User, error) 
 
 func (s *authServiceImpl) GenerateToken(user *model.User) (string, error) {
 	expiresAt := time.Now().Add(time.Duration(s.tokenExpiry) * time.Minute)
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, model.UserClaims{
+	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, dto.UserClaims{
 		UserID:   user.ID,
 		Username: user.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
@@ -86,19 +87,19 @@ func (s *authServiceImpl) GenerateToken(user *model.User) (string, error) {
 	return token, nil
 }
 
-func (s *authServiceImpl) ValidateToken(tokenString string) (*model.UserClaims, error) {
+func (s *authServiceImpl) ValidateToken(tokenString string) (*dto.UserClaims, error) {
 	re := regexp.MustCompile(`(?i)Bearer `)
 	tokenString = re.ReplaceAllString(tokenString, "")
 	if tokenString == "" {
 		return nil, errors.New("token is empty")
 	}
-	token, err := jwt.ParseWithClaims(tokenString, &model.UserClaims{}, func(t *jwt.Token) (interface{}, error) {
+	token, err := jwt.ParseWithClaims(tokenString, &dto.UserClaims{}, func(t *jwt.Token) (interface{}, error) {
 		return []byte(s.secretKey), nil
 	}, jwt.WithLeeway(5*time.Second))
 	if err != nil {
 		return nil, err
 	}
-	claims, ok := token.Claims.(*model.UserClaims)
+	claims, ok := token.Claims.(*dto.UserClaims)
 	if !ok {
 		return nil, errors.New("invalid token")
 	}
@@ -123,7 +124,7 @@ func (s *authServiceImpl) ValidateToken(tokenString string) (*model.UserClaims, 
 	return claims, nil
 }
 
-func (s *authServiceImpl) Logout(user *model.UserClaims) error {
+func (s *authServiceImpl) Logout(user *dto.UserClaims) error {
 	err := s.cache.Redis.Del(
 		context.Background(),
 		constant.CacheKeyUser+user.Username,
