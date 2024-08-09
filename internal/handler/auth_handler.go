@@ -38,19 +38,15 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 		return
 	}
 
-	user, err := h.userService.FindByUsername(req.Username)
+	user, err := h.authService.Login(req.Username, req.Password)
 	if err != nil {
 		response.ServerError(ctx, err)
-		return
-	}
-	if user == nil {
-		response.Unauthorized(ctx, errors.New("invalid username or password"))
 		return
 	}
 
-	token, err := h.authService.Login(user)
+	token, err := h.authService.GenerateToken(user)
 	if err != nil {
-		response.ServerError(ctx, err)
+		response.Unauthorized(ctx, err)
 		return
 	}
 
@@ -82,4 +78,17 @@ func (h *AuthHandler) GetLoginUser(ctx *gin.Context) {
 	log.Logger.Sugar().Infof("GetLoginUser: %v", user)
 
 	response.Ok(ctx, user)
+}
+
+// @Tags Auth
+// @Summary Logout user
+// @Security ApiKeyAuth
+// @Accept json
+// @Produce json
+// @Success 200 {object} response.Response{msg=string}
+// @Router /logout [post]
+func (h *AuthHandler) Logout(ctx *gin.Context) {
+	clamis := request.GetUserClaims(ctx)
+	h.authService.Logout(clamis)
+	response.Ok(ctx, nil)
 }

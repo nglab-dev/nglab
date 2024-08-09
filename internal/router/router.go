@@ -4,6 +4,7 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/docs"
+	"github.com/nglab-dev/nglab/internal/cache"
 	"github.com/nglab-dev/nglab/internal/db"
 	"github.com/nglab-dev/nglab/internal/handler"
 	"github.com/nglab-dev/nglab/internal/middleware"
@@ -36,9 +37,15 @@ func InitRouter() *gin.Engine {
 		panic(err)
 	}
 
+	// init cache
+	c, err := cache.Init()
+	if err != nil {
+		panic(err)
+	}
+
 	// service
-	authService := service.NewAuthService(jwtSecret, jwtExpire)
 	userService := service.NewUserService(db)
+	authService := service.NewAuthService(jwtSecret, jwtExpire, c, userService)
 
 	// handler
 	authHandler := handler.NewAuthHandler(authService, userService)
@@ -54,6 +61,7 @@ func InitRouter() *gin.Engine {
 
 		// auth
 		auth := api.Group("").Use(middleware.AuthMiddleware(authService))
+		auth.POST("/logout", authHandler.Logout)
 		auth.GET("/user", authHandler.GetLoginUser)
 	}
 

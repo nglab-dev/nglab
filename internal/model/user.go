@@ -9,7 +9,7 @@ type User struct {
 	Password  string `json:"-"`
 	Email     string `json:"email"`
 	AvatarUrl string `json:"avatar_url"`
-	Status    int    `json:"status"`
+	Enabled   int    `json:"enabled"`
 }
 
 func (u *User) TableName() string {

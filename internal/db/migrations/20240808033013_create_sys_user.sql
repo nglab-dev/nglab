@@ -10,13 +10,13 @@ CREATE TABLE `sys_user` (
   `password` TEXT NOT NULL,
   `email` TEXT UNIQUE NOT NULL,
   `avatar_url` TEXT,
-  `status` INT NOT NULL,
+  `enabled` INT NOT NULL, -- 0: disabled, 1: enabled
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   `updated_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY ("id")
 );
 
-INSERT INTO `sys_user` (`username`, `nickname`, `gender`, `phone`, `password`, `email`, `avatar_url`, `status`)
+INSERT INTO `sys_user` (`username`, `nickname`, `gender`, `phone`, `password`, `email`, `avatar_url`, `enabled`)
 VALUES ('admin', 'admin', 1, '13811112222', '$2a$10$05SaFGfrDvckPCV54xTNWezvpzL1JzJn8uwYAoXvuQR.Fe.0rqogy', 'admin@localhost.com', 'https://unpkg.com/outeres@0.0.5/demo/000.jpg', 1);
 
 
