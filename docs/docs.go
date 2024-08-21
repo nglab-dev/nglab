@@ -15,6 +15,80 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
+        "/dicts": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "dicts"
+                ],
+                "summary": "List Dict",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "type",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/dto.PaginationResult"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/model.Dict"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
                 "consumes": [
@@ -24,7 +98,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "Login user",
                 "parameters": [
@@ -74,7 +148,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "auth"
                 ],
                 "summary": "Logout user",
                 "responses": {
@@ -106,12 +180,11 @@ const docTemplate = `{
                         "ApiKeyAuth": []
                     }
                 ],
-                "description": "List Roles",
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "Roles"
+                    "roles"
                 ],
                 "summary": "List Roles",
                 "parameters": [
@@ -182,7 +255,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "Get login user",
                 "responses": {
@@ -219,7 +292,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "Update login user",
                 "parameters": [
@@ -269,7 +342,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "List users",
                 "parameters": [
@@ -338,7 +411,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "Create user",
                 "parameters": [
@@ -388,7 +461,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "Get user by id",
                 "parameters": [
@@ -434,7 +507,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Users"
+                    "users"
                 ],
                 "summary": "Update user",
                 "parameters": [
@@ -519,7 +592,7 @@ const docTemplate = `{
         "dto.PaginationResult": {
             "type": "object",
             "properties": {
-                "data": {},
+                "items": {},
                 "page": {
                     "type": "integer"
                 },
@@ -528,6 +601,40 @@ const docTemplate = `{
                 },
                 "total": {
                     "type": "integer"
+                }
+            }
+        },
+        "model.Dict": {
+            "type": "object",
+            "properties": {
+                "alias": {
+                    "description": "别名",
+                    "type": "string"
+                },
+                "created_at": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "description": "字典名称",
+                    "type": "string"
+                },
+                "remark": {
+                    "description": "备注",
+                    "type": "string"
+                },
+                "sort": {
+                    "description": "排序",
+                    "type": "integer"
+                },
+                "type": {
+                    "description": "字典类型，1 样本类型 2 实验方法 3 结果单位 4 标本性状 5 禁止打印原因",
+                    "type": "integer"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -548,6 +655,9 @@ const docTemplate = `{
                 },
                 "remark": {
                     "type": "string"
+                },
+                "sort": {
+                    "type": "integer"
                 },
                 "updated_at": {
                     "type": "string"
