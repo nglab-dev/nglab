@@ -34,23 +34,23 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/schema.LoginRequest"
+                            "$ref": "#/definitions/dto.LoginRequest"
                         }
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "0": {
+                        "description": "",
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.ResponseBody"
+                                    "$ref": "#/definitions/response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/schema.LoginResponse"
+                                            "$ref": "#/definitions/dto.LoginResponse"
                                         }
                                     }
                                 }
@@ -60,8 +60,13 @@ const docTemplate = `{
                 }
             }
         },
-        "/register": {
+        "/logout": {
             "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -71,31 +76,89 @@ const docTemplate = `{
                 "tags": [
                     "Auth"
                 ],
-                "summary": "Register user",
-                "parameters": [
-                    {
-                        "description": "Register request",
-                        "name": "request",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/schema.RegisterRequest"
-                        }
-                    }
-                ],
+                "summary": "Logout user",
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.ResponseBody"
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "msg": {
+                                            "type": "string"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/roles": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "description": "List Roles",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Roles"
+                ],
+                "summary": "List Roles",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/schema.RegisterResponse"
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/dto.PaginationResult"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/model.Role"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
                                         }
                                     }
                                 }
@@ -107,6 +170,11 @@ const docTemplate = `{
         },
         "/user": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
                 "consumes": [
                     "application/json"
                 ],
@@ -114,16 +182,183 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Auth"
+                    "Users"
                 ],
-                "summary": "Get auth user",
+                "summary": "Get login user",
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "0": {
+                        "description": "",
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.ResponseBody"
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update login user",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/dto.LoginUser"
+                        }
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/users": {
+            "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "List users",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "name": "keyword",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "name": "page_size",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "allOf": [
+                                                {
+                                                    "$ref": "#/definitions/dto.PaginationResult"
+                                                },
+                                                {
+                                                    "type": "object",
+                                                    "properties": {
+                                                        "Data": {
+                                                            "type": "array",
+                                                            "items": {
+                                                                "$ref": "#/definitions/model.User"
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            ]
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Create user",
+                "parameters": [
+                    {
+                        "description": "User",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -141,29 +376,92 @@ const docTemplate = `{
         },
         "/users/{id}": {
             "get": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "User"
+                    "Users"
                 ],
-                "summary": "User Get By ID",
+                "summary": "Get user by id",
                 "parameters": [
                     {
                         "type": "integer",
-                        "description": "user id",
+                        "description": "User ID",
                         "name": "id",
                         "in": "path",
                         "required": true
                     }
                 ],
                 "responses": {
-                    "200": {
-                        "description": "OK",
+                    "0": {
+                        "description": "",
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/handler.ResponseBody"
+                                    "$ref": "#/definitions/response.Response"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/model.User"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "patch": {
+                "security": [
+                    {
+                        "ApiKeyAuth": []
+                    }
+                ],
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Update user",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "User ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "User",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/model.User"
+                        }
+                    }
+                ],
+                "responses": {
+                    "0": {
+                        "description": "",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Response"
                                 },
                                 {
                                     "type": "object",
@@ -181,27 +479,78 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "handler.ResponseBody": {
+        "dto.LoginRequest": {
             "type": "object",
+            "required": [
+                "password",
+                "username"
+            ],
             "properties": {
-                "code": {
-                    "type": "integer"
+                "password": {
+                    "type": "string"
                 },
-                "data": {},
-                "msg": {
+                "username": {
                     "type": "string"
                 }
             }
         },
-        "model.Datetime": {
+        "dto.LoginResponse": {
             "type": "object",
             "properties": {
-                "time": {
+                "access_token": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.LoginUser": {
+            "type": "object",
+            "properties": {
+                "email": {
                     "type": "string"
                 },
-                "valid": {
-                    "description": "Valid is true if Time is not NULL",
-                    "type": "boolean"
+                "nickname": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
+        "dto.PaginationResult": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.Role": {
+            "type": "object",
+            "properties": {
+                "created_at": {
+                    "type": "string"
+                },
+                "enable": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "remark": {
+                    "type": "string"
+                },
+                "updated_at": {
+                    "type": "string"
                 }
             }
         },
@@ -212,9 +561,6 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "created_at": {
-                    "$ref": "#/definitions/model.Datetime"
-                },
-                "created_by": {
                     "type": "string"
                 },
                 "email": {
@@ -223,22 +569,25 @@ const docTemplate = `{
                 "enabled": {
                     "type": "integer"
                 },
+                "gender": {
+                    "type": "integer"
+                },
                 "id": {
                     "type": "integer"
+                },
+                "nickname": {
+                    "type": "string"
                 },
                 "phone": {
                     "type": "string"
                 },
-                "real_name": {
-                    "type": "string"
-                },
-                "type": {
-                    "type": "integer"
+                "roles": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Role"
+                    }
                 },
                 "updated_at": {
-                    "$ref": "#/definitions/model.Datetime"
-                },
-                "updated_by": {
                     "type": "string"
                 },
                 "username": {
@@ -246,49 +595,15 @@ const docTemplate = `{
                 }
             }
         },
-        "schema.LoginRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "schema.LoginResponse": {
+        "response.Response": {
             "type": "object",
             "properties": {
-                "access_token": {
-                    "type": "string"
-                }
-            }
-        },
-        "schema.RegisterRequest": {
-            "type": "object",
-            "required": [
-                "password",
-                "username"
-            ],
-            "properties": {
-                "password": {
-                    "type": "string"
-                },
-                "username": {
-                    "type": "string"
-                }
-            }
-        },
-        "schema.RegisterResponse": {
-            "type": "object",
-            "properties": {
-                "id": {
+                "code": {
                     "type": "integer"
+                },
+                "data": {},
+                "msg": {
+                    "type": "string"
                 }
             }
         }
