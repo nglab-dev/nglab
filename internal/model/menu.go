@@ -12,3 +12,7 @@ type Menu struct {
 }
 
 type Menus []Menu
+
+func (m Menus) TableName() string {
+	return "sys_menu"
+}

@@ -22,7 +22,7 @@ func NewUserHandler(userService service.UserService) *UserHandler {
 	}
 }
 
-// @Tags Users
+// @Tags users
 // @Summary Get login user
 // @Security ApiKeyAuth
 // @Accept json
@@ -45,7 +45,7 @@ func (h *UserHandler) GetLoginUser(ctx *gin.Context) {
 	response.Ok(ctx, user)
 }
 
-// @Tags Users
+// @Tags users
 // @Summary Update login user
 // @Security ApiKeyAuth
 // @Accept json
@@ -77,13 +77,13 @@ func (h *UserHandler) UpdateLoginUser(ctx *gin.Context) {
 	response.Ok(ctx, user)
 }
 
-// @Tags Users
+// @Tags users
 // @Summary List users
 // @Security ApiKeyAuth
 // @Accept json
 // @Produce json
 // @Param data query dto.PaginationParam true "PaginationParam"
-// @Success 0 {object} response.Response{data=dto.PaginationResult{Data=[]model.User}}
+// @Success 0 {object} response.Response{data=dto.PaginationResult{Data=model.Users}}
 // @Router /users [get]
 func (h *UserHandler) ListUsers(ctx *gin.Context) {
 	var req dto.PaginationParam
@@ -99,7 +99,7 @@ func (h *UserHandler) ListUsers(ctx *gin.Context) {
 	response.Ok(ctx, page)
 }
 
-// @Tags Users
+// @Tags users
 // @Summary Create user
 // @Security ApiKeyAuth
 // @Accept json
@@ -121,7 +121,7 @@ func (h *UserHandler) CreateUser(ctx *gin.Context) {
 	response.Ok(ctx, req)
 }
 
-// @Tags Users
+// @Tags users
 // @Summary Get user by id
 // @Security ApiKeyAuth
 // @Accept json
@@ -152,7 +152,7 @@ func (h *UserHandler) GetUser(ctx *gin.Context) {
 	response.Ok(ctx, user)
 }
 
-// @Tags Users
+// @Tags users
 // @Summary Update user
 // @Security ApiKeyAuth
 // @Accept json

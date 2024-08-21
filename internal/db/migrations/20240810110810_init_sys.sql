@@ -1,6 +1,18 @@
 -- +goose Up
 -- +goose StatementBegin
 
+-- sys_token 系统会话表
+CREATE TABLE `sys_session` (
+    `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, -- 自增主键
+    `token` TEXT NOT NULL, -- token值
+    `user_id` INTEGER NOT NULL, -- 用户ID
+    `ip` TEXT NOT NULL, -- IP地址
+    `user_agent` TEXT NOT NULL, -- pc端浏览器信息
+    `expires_at` DATETIME NOT NULL, -- 过期时间
+    `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP, -- 创建时间
+    `updated_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP -- 更新时间
+);
+
 -- sys_org 系统机构表
 CREATE TABLE `sys_org` (
     `id` INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT, -- 自增主键

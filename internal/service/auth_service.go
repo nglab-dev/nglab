@@ -1,7 +1,6 @@
 package service
 
 import (
-	"context"
 	"errors"
 	"regexp"
 	"time"
@@ -12,28 +11,37 @@ import (
 	"github.com/nglab-dev/nglab/internal/model"
 	"github.com/nglab-dev/nglab/internal/model/dto"
 	"golang.org/x/crypto/bcrypt"
+	"gorm.io/gorm"
 )
 
 type AuthService interface {
 	Login(username, password string) (*model.User, error)
 	Logout(user *dto.UserClaims) error
-	GenerateToken(user *model.User) (string, error)
+	GenerateToken(user *model.User, ip string, ua string) (string, error)
 	ValidateToken(token string) (*dto.UserClaims, error)
 }
 
 type authServiceImpl struct {
 	secretKey   string
 	tokenExpiry int
+	db          *gorm.DB
 	cache       *cache.Cache
 	userService UserService
 }
 
-func NewAuthService(secretKey string, tokenExpiry int, cache *cache.Cache, userService UserService) AuthService {
+func NewAuthService(
+	secretKey string,
+	tokenExpiry int,
+	db *gorm.DB,
+	cache *cache.Cache,
+	userService UserService,
+) AuthService {
 	return &authServiceImpl{
-		secretKey:   secretKey,
-		tokenExpiry: tokenExpiry,
-		cache:       cache,
-		userService: userService,
+		secretKey,
+		tokenExpiry,
+		db,
+		cache,
+		userService,
 	}
 }
 
@@ -58,7 +66,7 @@ func (s *authServiceImpl) Login(username, password string) (*model.User, error) 
 	return user, nil
 }
 
-func (s *authServiceImpl) GenerateToken(user *model.User) (string, error) {
+func (s *authServiceImpl) GenerateToken(user *model.User, ip string, ua string) (string, error) {
 	expiresAt := time.Now().Add(time.Duration(s.tokenExpiry) * time.Minute)
 	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, dto.UserClaims{
 		UserID:   user.ID,
@@ -75,15 +83,18 @@ func (s *authServiceImpl) GenerateToken(user *model.User) (string, error) {
 		return "", err
 	}
 
-	err = s.cache.Redis.Set(
-		context.Background(),
-		constant.CacheKeyUser+user.Username,
-		token,
-		time.Duration(s.tokenExpiry)*time.Minute,
-	).Err()
-	if err != nil {
+	// save sys_session
+	session := model.Session{
+		UserID:    user.ID,
+		Token:     token,
+		ExpiresAt: expiresAt,
+		IP:        ip,
+		UserAgent: ua,
+	}
+	if err := s.db.Create(&session).Error; err != nil {
 		return "", err
 	}
+
 	return token, nil
 }
 
@@ -104,16 +115,10 @@ func (s *authServiceImpl) ValidateToken(tokenString string) (*dto.UserClaims, er
 		return nil, errors.New("invalid token")
 	}
 
-	// Check if redis cache has token key
-	exists, err := s.cache.Redis.Exists(
-		context.Background(),
-		constant.CacheKeyUser+claims.Username,
-	).Result()
-	if err != nil {
-		return nil, err
-	}
-	if exists != 1 {
-		return nil, errors.New("token is expired")
+	var session model.Session
+	err = s.db.Where("token = ?", tokenString).First(&session).Error
+	if err != nil || session.ID == 0 {
+		return nil, errors.New("invalid token")
 	}
 
 	// Check if token is expired
@@ -125,10 +130,7 @@ func (s *authServiceImpl) ValidateToken(tokenString string) (*dto.UserClaims, er
 }
 
 func (s *authServiceImpl) Logout(user *dto.UserClaims) error {
-	err := s.cache.Redis.Del(
-		context.Background(),
-		constant.CacheKeyUser+user.Username,
-	).Err()
+	err := s.db.Where("user_id = ?", user.UserID).Delete(&model.Session{}).Error
 	if err != nil {
 		return err
 	}

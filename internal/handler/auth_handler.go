@@ -20,7 +20,7 @@ func NewAuthHandler(authService service.AuthService, userService service.UserSer
 	}
 }
 
-// @Tags Auth
+// @Tags auth
 // @Summary Login user
 // @Accept json
 // @Produce json
@@ -40,8 +40,10 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 		response.ServerError(ctx, err)
 		return
 	}
+	ip := ctx.ClientIP()
+	ua := ctx.Request.UserAgent()
 
-	token, err := h.authService.GenerateToken(user)
+	token, err := h.authService.GenerateToken(user, ip, ua)
 	if err != nil {
 		response.Unauthorized(ctx, err)
 		return
@@ -52,7 +54,7 @@ func (h *AuthHandler) Login(ctx *gin.Context) {
 	})
 }
 
-// @Tags Auth
+// @Tags auth
 // @Summary Logout user
 // @Security ApiKeyAuth
 // @Accept json

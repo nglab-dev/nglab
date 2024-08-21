@@ -17,13 +17,12 @@ func NewRoleHandler(roleService service.RoleService) *RoleHandler {
 	}
 }
 
-// @Tags Roles
+// @Tags roles
 // @Summary List Roles
 // @Security ApiKeyAuth
-// @Description List Roles
 // @Produce json
 // @Param data query dto.PaginationParam true "PaginationParam"
-// @Success 0 {object} response.Response{data=dto.PaginationResult{Data=[]model.Role}}
+// @Success 0 {object} response.Response{data=dto.PaginationResult{Data=model.Roles}}
 // @Router /roles [get]
 func (h *RoleHandler) ListRoles(ctx *gin.Context) {
 	var req dto.PaginationParam

@@ -50,12 +50,14 @@ func InitRouter() *gin.Engine {
 	// service
 	userService := service.NewUserService(db)
 	roleService := service.NewRoleService(db)
-	authService := service.NewAuthService(jwtSecret, jwtExpire, c, userService)
+	authService := service.NewAuthService(jwtSecret, jwtExpire, db, c, userService)
+	dictService := service.NewDictService(db)
 
 	// handler
 	authHandler := handler.NewAuthHandler(authService, userService)
 	userHandler := handler.NewUserHandler(userService)
 	roleHandler := handler.NewRoleHandler(roleService)
+	dictHandler := handler.NewDictHandler(dictService)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
 	docs.SwaggerInfo.BasePath = "/api"
@@ -79,6 +81,8 @@ func InitRouter() *gin.Engine {
 		auth.PATCH("/users/:id", userHandler.UpdateUser)
 		// roles
 		auth.GET("/roles", roleHandler.ListRoles)
+		// dicts
+		auth.GET("/dicts", dictHandler.ListDicts)
 	}
 
 	return r
