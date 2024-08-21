@@ -14,7 +14,7 @@ FROM alpine:latest
 
 WORKDIR /app
 
-COPY --from=builder /src/bin/nglab ./app/nglab
+COPY --from=builder /src/bin/nglab .
 
 EXPOSE 8080
 
