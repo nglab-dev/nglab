@@ -15,6 +15,7 @@ FROM alpine:latest
 WORKDIR /app
 
 COPY --from=builder /src/bin/nglab .
+COPY --from=builder /src/db.sqlite .
 COPY --from=builder /src/.env .
 
 EXPOSE 8080

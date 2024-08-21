@@ -18,8 +18,8 @@ type HTTPServer struct {
 }
 
 func NewHTTPServer(handler http.Handler) *HTTPServer {
-	host := env.GetString("HTTP_HOST", "0.0.0.0")
-	port, _ := env.GetInt("HTTP_PORT", 8080)
+	host := env.GetString("SERVER_HOST", "0.0.0.0")
+	port, _ := env.GetInt("SERVER_PORT", 8080)
 
 	addr := fmt.Sprintf("%s:%d", host, port)
 	return &HTTPServer{

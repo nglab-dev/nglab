@@ -21,9 +21,10 @@ import (
 func InitRouter() *gin.Engine {
 
 	jwtSecret := env.GetString("JWT_SECRET", "secret")
-	jwtExpire, _ := env.GetInt("JWT_EXPIRE", 3600)
+	jwtExpire, _ := env.GetInt("JWT_EXPIRE_TIME", 36000)
 	logLevel := env.GetString("LOG_LEVEL", "debug")
 	logEncoding := env.GetString("LOG_ENCODING", "console")
+	serverPrefix := env.GetString("SERVER_PREFIX", "/api")
 
 	// init logger
 	log.InitLogger(logLevel, logEncoding)
@@ -60,10 +61,10 @@ func InitRouter() *gin.Engine {
 	dictHandler := handler.NewDictHandler(dictService)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	docs.SwaggerInfo.BasePath = "/api"
+	docs.SwaggerInfo.BasePath = serverPrefix
 
 	// endpoint
-	api := r.Group("/api")
+	api := r.Group(serverPrefix)
 	{
 		// no auth
 		api.POST("/login", authHandler.Login)

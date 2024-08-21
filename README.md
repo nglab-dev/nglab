@@ -1,6 +1,6 @@
 # nglab
 
-Next generation lab system
+Next generation lab information management system
 
 
 TODO:
