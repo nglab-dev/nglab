@@ -1,5 +1,11 @@
 package model
 
+type DictType struct {
+	BaseModel
+	Name   string `json:"name"`
+	Remark string `json:"remark"`
+}
+
 type Dict struct {
 	BaseModel
 	Type   int    `json:"type"`   //字典类型，1 样本类型 2 实验方法 3 结果单位 4 标本性状 5 禁止打印原因
@@ -9,7 +15,13 @@ type Dict struct {
 	Sort   int    `json:"sort"`   //排序
 }
 
+type DictTypes []DictType
+
 type Dicts []Dict
+
+func (d *DictType) TableName() string {
+	return "base_dict_type"
+}
 
 func (d *Dict) TableName() string {
 	return "base_dict"

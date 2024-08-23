@@ -57,6 +57,19 @@ definitions:
       updated_at:
         type: string
     type: object
+  model.DictType:
+    properties:
+      created_at:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      remark:
+        type: string
+      updated_at:
+        type: string
+    type: object
   model.Role:
     properties:
       created_at:
@@ -150,6 +163,27 @@ paths:
       security:
       - ApiKeyAuth: []
       summary: List Dict
+      tags:
+      - dicts
+  /dicts/types:
+    get:
+      produces:
+      - application/json
+      responses:
+        "0":
+          description: ""
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Response'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/model.DictType'
+                  type: array
+              type: object
+      security:
+      - ApiKeyAuth: []
+      summary: List Dict Types
       tags:
       - dicts
   /login:

@@ -1,5 +1,25 @@
 -- +goose Up
 -- +goose StatementBegin
+
+-- 字段类型表
+CREATE TABLE `base_dict_type` (
+    `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+    `name` TEXT NOT NULL, -- 类型名称
+    `remark` TEXT DEFAULT NULL, -- 备注
+    `sort` INTEGER DEFAULT 0, -- 排序
+    `created_at` DATETIME DEFAULT CURRENT_TIMESTAMP, -- 创建时间
+    `updated_at` DATETIME DEFAULT CURRENT_TIMESTAMP, -- 更新时间
+    `created_by` INTEGER NOT NULL DEFAULT 0, -- 创建人
+    `updated_by` INTEGER NOT NULL DEFAULT 0 -- 更新人
+);
+
+INSERT INTO "base_dict_type" ("id", "name") VALUES (1, '样本类型');
+INSERT INTO "base_dict_type" ("id", "name") VALUES (2, '实验方法');
+INSERT INTO "base_dict_type" ("id", "name") VALUES (3, '结果单位');
+INSERT INTO "base_dict_type" ("id", "name") VALUES (4, '标本性状');
+INSERT INTO "base_dict_type" ("id", "name") VALUES (5, '禁止打印原因');
+
+-- 字典表
 CREATE TABLE `base_dict` (
     `id` INTEGER PRIMARY KEY AUTOINCREMENT,
     `type` INTEGER NOT NULL, --字典类型，1 样本类型 2 实验方法 3 结果单位 4 标本性状 5 禁止打印原因

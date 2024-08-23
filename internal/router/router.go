@@ -83,6 +83,8 @@ func InitRouter() *gin.Engine {
 		// roles
 		auth.GET("/roles", roleHandler.ListRoles)
 		// dicts
+		auth.GET("/dicts/types", dictHandler.ListDictTypes)
+		auth.POST("/dicts/types", dictHandler.CreateDictType)
 		auth.GET("/dicts", dictHandler.ListDicts)
 	}
 

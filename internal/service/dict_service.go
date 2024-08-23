@@ -8,6 +8,8 @@ import (
 
 type DictService interface {
 	Page(query dto.DictPaginationParam) (dto.PaginationResult, error)
+	Types() (model.DictTypes, error)
+	CreateType(model.DictType) error
 }
 
 type dictServiceImpl struct {
@@ -40,4 +42,16 @@ func (s *dictServiceImpl) Page(query dto.DictPaginationParam) (dto.PaginationRes
 		Page:     query.Page,
 		PageSize: query.PageSize,
 	}, nil
+}
+
+func (s *dictServiceImpl) Types() (types model.DictTypes, err error) {
+	err = s.db.Model(&model.DictType{}).Find(&types).Error
+	if err != nil {
+		return nil, err
+	}
+	return types, nil
+}
+
+func (s *dictServiceImpl) CreateType(t model.DictType) error {
+	return s.db.Create(&t).Error
 }
