@@ -27,7 +27,7 @@ dev:
 	--log.main_only true
 
 build:
-	@go build -o ${BINARY} ${MAIN}
+	@go build -ldflags="-s -w" -o ${BINARY} ${MAIN}
 
 swag:
 	@go run github.com/swaggo/swag/cmd/swag@latest init --parseDependency
