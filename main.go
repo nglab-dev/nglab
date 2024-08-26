@@ -1,7 +1,8 @@
 package main
 
 import (
-	"github.com/joho/godotenv"
+	_ "github.com/joho/godotenv/autoload"
+	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/internal/router"
 	"github.com/nglab-dev/nglab/internal/server"
 )
@@ -11,13 +12,12 @@ import (
 // @name Authorization
 // @BasePath /api
 func main() {
-	if err := godotenv.Load(); err != nil {
-		panic(err)
-	}
 
-	r := router.InitRouter()
+	c := config.Load()
 
-	srv := server.NewHTTPServer(r)
+	r := router.InitRouter(c)
+
+	srv := server.NewHTTPServer(c, r)
 
 	if err := srv.Run(); err != nil {
 		panic(err)

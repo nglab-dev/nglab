@@ -8,26 +8,20 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/nglab-dev/nglab/docs"
 	"github.com/nglab-dev/nglab/internal/cache"
+	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/internal/db"
 	"github.com/nglab-dev/nglab/internal/handler"
 	"github.com/nglab-dev/nglab/internal/middleware"
 	"github.com/nglab-dev/nglab/internal/service"
-	"github.com/nglab-dev/nglab/pkg/env"
 	"github.com/nglab-dev/nglab/pkg/log"
 	swaggerfiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func InitRouter() *gin.Engine {
-
-	jwtSecret := env.GetString("JWT_SECRET", "secret")
-	jwtExpire, _ := env.GetInt("JWT_EXPIRE_TIME", 36000)
-	logLevel := env.GetString("LOG_LEVEL", "debug")
-	logEncoding := env.GetString("LOG_ENCODING", "console")
-	serverPrefix := env.GetString("SERVER_PREFIX", "/api")
+func InitRouter(cfg *config.Config) *gin.Engine {
 
 	// init logger
-	log.InitLogger(logLevel, logEncoding)
+	log.InitLogger(cfg.Log.Level, cfg.Log.Encoding)
 
 	// create router
 	r := gin.New()
@@ -37,13 +31,13 @@ func InitRouter() *gin.Engine {
 	r.Use(cors.Default())
 
 	// connect db
-	db, err := db.Connect()
+	db, err := db.Connect(cfg)
 	if err != nil {
 		panic(err)
 	}
 
 	// init cache
-	c, err := cache.Init()
+	c, err := cache.Init(cfg)
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +45,7 @@ func InitRouter() *gin.Engine {
 	// service
 	userService := service.NewUserService(db)
 	roleService := service.NewRoleService(db)
-	authService := service.NewAuthService(jwtSecret, jwtExpire, db, c, userService)
+	authService := service.NewAuthService(cfg.JWT.Secret, cfg.JWT.ExpireTime, db, c, userService)
 	dictService := service.NewDictService(db)
 
 	// handler
@@ -61,10 +55,10 @@ func InitRouter() *gin.Engine {
 	dictHandler := handler.NewDictHandler(dictService)
 
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerfiles.Handler))
-	docs.SwaggerInfo.BasePath = serverPrefix
+	docs.SwaggerInfo.BasePath = cfg.Server.Prefix
 
 	// endpoint
-	api := r.Group(serverPrefix)
+	api := r.Group(cfg.Server.Prefix)
 	{
 		// no auth
 		api.POST("/login", authHandler.Login)

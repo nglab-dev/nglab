@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/allegro/bigcache/v3"
+	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/pkg/env"
 	"github.com/nglab-dev/nglab/pkg/log"
 	"github.com/redis/go-redis/v9"
@@ -15,7 +16,7 @@ type Cache struct {
 	Redis  *redis.Client
 }
 
-func Init() (*Cache, error) {
+func Init(c *config.Config) (*Cache, error) {
 
 	cache, err := bigcache.New(context.Background(), bigcache.DefaultConfig(10*time.Minute))
 	if err != nil {

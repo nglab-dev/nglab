@@ -9,7 +9,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/nglab-dev/nglab/pkg/env"
+	"github.com/nglab-dev/nglab/internal/config"
 	"github.com/nglab-dev/nglab/pkg/log"
 )
 
@@ -17,11 +17,8 @@ type HTTPServer struct {
 	srv *http.Server
 }
 
-func NewHTTPServer(handler http.Handler) *HTTPServer {
-	host := env.GetString("SERVER_HOST", "0.0.0.0")
-	port, _ := env.GetInt("SERVER_PORT", 8080)
-
-	addr := fmt.Sprintf("%s:%d", host, port)
+func NewHTTPServer(c *config.Config, handler http.Handler) *HTTPServer {
+	addr := fmt.Sprintf("%s:%d", c.Server.Host, c.Server.Port)
 	return &HTTPServer{
 		srv: &http.Server{
 			Addr:           addr,

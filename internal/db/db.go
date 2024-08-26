@@ -7,7 +7,7 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/nglab-dev/nglab/pkg/env"
+	"github.com/nglab-dev/nglab/internal/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/postgres"
 	"gorm.io/driver/sqlite"
@@ -15,9 +15,10 @@ import (
 	"gorm.io/gorm/logger"
 )
 
-func Connect() (db *gorm.DB, err error) {
-	driver := env.GetString("DB_DRIVER", "sqlite")
-	dsn := env.GetString("DB_DSN", "db.sqlite")
+func Connect(c *config.Config) (db *gorm.DB, err error) {
+
+	driver := c.DB.Driver
+	dsn := c.DB.DSN
 
 	if driver == "sqlite" {
 		// if path is not exist, create it
